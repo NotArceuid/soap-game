@@ -11,6 +11,13 @@
 	import { PagesState } from "./Pages/Pages.ts";
 	import CurrenciesPanel from "../Components/Layout/CurrenciesPanel.svelte";
 	import Howtfdoiplay from "./Pages/guide/howtfdoiplay.svelte";
+	import Cat from "./Pages/Cat/Cat.svelte";
+	import NotificationHandler from "../Components/Common/NotificationHandler.svelte";
+	import {
+		AchievementKey,
+		InvokeAchievement,
+		UnlockAchievement,
+	} from "../Game/Achievements/Achievements.svelte.ts";
 
 	let gameRunning = true;
 	let gameloop: GameLoop;
@@ -42,10 +49,11 @@
 
 		let elements = document.getElementById("locations")?.children!;
 		MainPageHandler.RegisterPages(Pages.Soap, elements[0] as HTMLElement);
-		MainPageHandler.RegisterPages(Pages.Settings, elements[1] as HTMLElement);
+		MainPageHandler.RegisterPages(Pages.Cat, elements[1] as HTMLElement);
+		MainPageHandler.RegisterPages(Pages.Settings, elements[2] as HTMLElement);
 		MainPageHandler.RegisterPages(
 			Pages.HowTfDoIPlay,
-			elements[2] as HTMLElement,
+			elements[3] as HTMLElement,
 		);
 
 		MainPageHandler.ChangePage(Pages.Soap);
@@ -54,7 +62,7 @@
 
 {#if gameRunning}
 	<div
-		class="h-full p-6 flex flex-col"
+		class="h-full relative p-6 flex flex-col"
 		style="border-color: rgba({ColorTheme.BorderColor.r}, {ColorTheme
 			.BorderColor.g}, {ColorTheme.BorderColor.b}, {ColorTheme.BorderColor.a});"
 	>
@@ -62,14 +70,19 @@
 		<div class="flex flex-rows w-full h-full">
 			<div id="locations" class="w-10/12 relative">
 				<Soap />
+				<Cat />
 				<Settings />
 				<Howtfdoiplay />
 			</div>
 			<CurrenciesPanel />
 		</div>
+
+		<div class="absolute bottom-5 right-5">
+			<NotificationHandler />
+		</div>
 	</div>
 	{#if dev}
-		<div class="absolute top-0 left-0">
+		<div class="absolute">
 			<input
 				type="checkbox"
 				bind:checked={DevHacks.speedhack}

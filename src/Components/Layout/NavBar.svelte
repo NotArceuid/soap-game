@@ -4,10 +4,12 @@
 
 <div id="navbar">
 	<button onclick={() => MainPageHandler.ChangePage(Pages.Soap)}>Soap</button>
+	<button onclick={() => MainPageHandler.ChangePage(Pages.Cat)}
+		>Cat ₍^. .^₎⟆</button
+	>
 	<button onclick={() => MainPageHandler.ChangePage(Pages.Settings)}
 		>Settings</button
 	>
-
 	<button
 		class="justify-end"
 		onclick={() => MainPageHandler.ChangePage(Pages.HowTfDoIPlay)}

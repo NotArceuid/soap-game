@@ -34,11 +34,12 @@
 	});
 </script>
 
-<div class="border m-2 p-2 min-w-3/12">
+<div class="border m-2 p-2 min-w-5/12">
 	<h1>{soap.Type}</h1>
 	<h1>Amount: {soap.Amount}</h1>
 	<div class="flex flex-row">
-		<button class="w-full mr-1" onclick={Sell}>Sell {amount}x</button>
-		<button class="w-full" onclick={Consume}>Eat {amount}x</button>
+		<button class="w-full" onclick={Sell}>Sell {amount}x</button>
+		<button class="w-full mr-1 ml-1" onclick={Consume}>Eat {amount}x</button>
+		<button class="w-full" onclick={Consume}>Offer {amount}x</button>
 	</div>
 </div>

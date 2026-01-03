@@ -3,6 +3,7 @@ import { PageHandler } from "./Pages/Pages";
 export enum Pages {
   Soap,
   Settings,
+  Cat,
   HowTfDoIPlay,
 }
 

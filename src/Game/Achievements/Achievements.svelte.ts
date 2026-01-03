@@ -2,6 +2,7 @@ import { SvelteMap } from "svelte/reactivity";
 import { InvokeableEvent } from "../Shared/Events";
 
 export const UnlockAchievement: InvokeableEvent<AchievementKey> = new InvokeableEvent<AchievementKey>();
+export function InvokeAchievement(key: AchievementKey) { UnlockAchievement.invoke(key); }
 
 export const AchievementsData: SvelteMap<AchievementKey, IAchievement> = new SvelteMap<AchievementKey, IAchievement>();
 export enum AchievementKey { Businessman, UpgradeProducer, Bulk, UndiagnosedOCD, JuanZeroZero, Millionaire, RankUp, Cat, UIIAI, FirstQuest, EatSoap, OrangeSoap, IShowSpeed }
@@ -19,7 +20,7 @@ AchievementsData.set(AchievementKey.EatSoap, { name: "Eat Soap", description: "E
 AchievementsData.set(AchievementKey.OrangeSoap, { name: "Orange Soap", description: "Unlock Orange soap" })
 AchievementsData.set(AchievementKey.IShowSpeed, { name: "IShowSpeed", description: "Reach 100 speed on any producer" })
 
-interface IAchievement {
+export interface IAchievement {
   name: string,
   description: string,
   unlocked?: boolean
