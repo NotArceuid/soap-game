@@ -23,7 +23,7 @@ export class Soap implements ISoapData {
   }
 
   public CanSell(amount: Decimal): boolean {
-    return this.Amount >= amount;
+    return amount <= this.Amount;
   }
 
   public Sell(amount: Decimal) {

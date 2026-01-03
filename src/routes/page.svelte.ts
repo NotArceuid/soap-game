@@ -4,6 +4,7 @@ export enum Pages {
   Soap,
   Settings,
   Cat,
+  Achievements,
   HowTfDoIPlay,
 }
 

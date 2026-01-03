@@ -2,24 +2,26 @@ import { Soap, SoapData, SoapType } from "./Soap/Soap.svelte.ts";
 import { Update } from "./Game.svelte.ts";
 import { SaveSystem, type Saveable } from "./Saves.ts";
 import { Decimal } from "./Shared/BreakInfinity/Decimal.svelte";
-import { UpgradesData, UpgradesKey } from "./Soap/Upgrades.svelte.ts";
-import { log } from "console";
+import { UpgradesKey } from "./Soap/Upgrades.svelte.ts";
+import { SvelteMap } from "svelte/reactivity";
 
 interface IPlayer {
   Name: string;
   Money: Decimal;
-  Soaps: Map<SoapType, Soap>;
+  SC: number;
+  Soaps: SvelteMap<SoapType, Soap>;
   Bulk: Bulk;
-  SoapUpgrades: Map<UpgradesKey, number>
+  SoapUpgrades: SvelteMap<UpgradesKey, number>
 }
 
 class PlayerClass implements Saveable {
   _player = $state<IPlayer>({
     Name: "Player",
     Money: new Decimal(0),
-    Soaps: new Map<SoapType, Soap>(),
+    SC: 0,
+    Soaps: new SvelteMap<SoapType, Soap>(),
     Bulk: Bulk.One,
-    SoapUpgrades: new Map(),
+    SoapUpgrades: new SvelteMap(),
   });
 
   constructor() {

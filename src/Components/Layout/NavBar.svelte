@@ -7,6 +7,9 @@
 	<button onclick={() => MainPageHandler.ChangePage(Pages.Cat)}
 		>Cat ₍^. .^₎⟆</button
 	>
+	<button onclick={() => MainPageHandler.ChangePage(Pages.Achievements)}
+		>Achievements</button
+	>
 	<button onclick={() => MainPageHandler.ChangePage(Pages.Settings)}
 		>Settings</button
 	>

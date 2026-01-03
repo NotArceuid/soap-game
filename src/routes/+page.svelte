@@ -18,6 +18,7 @@
 		InvokeAchievement,
 		UnlockAchievement,
 	} from "../Game/Achievements/Achievements.svelte.ts";
+	import Achievements from "./Pages/Achievements/Achievements.svelte";
 
 	let gameRunning = true;
 	let gameloop: GameLoop;
@@ -50,10 +51,14 @@
 		let elements = document.getElementById("locations")?.children!;
 		MainPageHandler.RegisterPages(Pages.Soap, elements[0] as HTMLElement);
 		MainPageHandler.RegisterPages(Pages.Cat, elements[1] as HTMLElement);
-		MainPageHandler.RegisterPages(Pages.Settings, elements[2] as HTMLElement);
+		MainPageHandler.RegisterPages(
+			Pages.Achievements,
+			elements[2] as HTMLElement,
+		);
+		MainPageHandler.RegisterPages(Pages.Settings, elements[3] as HTMLElement);
 		MainPageHandler.RegisterPages(
 			Pages.HowTfDoIPlay,
-			elements[3] as HTMLElement,
+			elements[4] as HTMLElement,
 		);
 
 		MainPageHandler.ChangePage(Pages.Soap);
@@ -71,6 +76,7 @@
 			<div id="locations" class="w-10/12 relative">
 				<Soap />
 				<Cat />
+				<Achievements />
 				<Settings />
 				<Howtfdoiplay />
 			</div>
