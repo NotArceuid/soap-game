@@ -6,14 +6,12 @@
 		UpgradesData,
 		UpgradesKey,
 	} from "../../../Game/Soap/Upgrades.svelte";
-	import { log } from "console";
 
 	let { soap }: { soap: Soap } = $props();
 	let amount = $state(Decimal.ONE);
 	let can = $derived(amount <= soap.Amount ? "" : "bg-gray-100");
 
 	$effect(() => {
-		log(soap.Type);
 		switch (Player.Bulk) {
 			case Bulk.One:
 				amount = Decimal.ONE;

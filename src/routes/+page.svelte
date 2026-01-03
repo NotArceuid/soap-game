@@ -1,19 +1,19 @@
 <script lang="ts">
+	import { MainPageHandler, Pages } from "./page.svelte.ts";
 	import { DevHacks, GameLoop } from "../Game/Game.svelte.ts";
 	import { SaveSystem } from "../Game/Saves.ts";
 	import { dev } from "$app/environment";
 	import { ColorTheme } from "./Pages/Settings.svelte.ts";
 	import Settings from "./Pages/Settings.svelte";
-	import NavBar from "../Components/Layout/NavBar.svelte";
 	import Soap from "./Pages/Soap/Soap.svelte";
 	import { onMount } from "svelte";
-	import { MainPageHandler, Pages } from "./page.svelte.ts";
 	import { PagesState } from "./Pages/Pages.ts";
-	import CurrenciesPanel from "../Components/Layout/CurrenciesPanel.svelte";
 	import Howtfdoiplay from "./Pages/guide/howtfdoiplay.svelte";
 	import Cat from "./Pages/Cat/Cat.svelte";
-	import NotificationHandler from "../Components/Common/NotificationHandler.svelte";
 	import Achievements from "./Pages/Achievements/Achievements.svelte";
+	import NavBar from "./Pages/Components/NavBar.svelte";
+	import CurrenciesPanel from "./Pages/Components/CurrenciesPanel.svelte";
+	import NotificationHandler from "./Pages/Components/NotificationHandler.svelte";
 
 	let gameRunning = true;
 	let gameloop: GameLoop;
@@ -82,7 +82,6 @@
 			<NotificationHandler />
 		</div>
 		{#if dev}
-			<h1>What</h1>
 			<div class="absolute -top-1">
 				<input
 					type="checkbox"

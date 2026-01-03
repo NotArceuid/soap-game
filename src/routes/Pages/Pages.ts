@@ -7,7 +7,6 @@ import { Pages } from "../page.svelte.ts";
 const PageChanged: InvokeableEvent<Pages> = new InvokeableEvent();
 export const PagesState: Map<Pages, number> = new Map<Pages, number>();
 
-
 export class PageHandler<T extends number> {
   public Parent: Pages = Pages.Soap;
   public PagesMap = new SvelteMap<T, HTMLElement>();

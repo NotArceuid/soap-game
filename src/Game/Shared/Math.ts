@@ -82,3 +82,8 @@ export interface IEquation {
   BuyMax(input: Decimal, level: number, a: number, b: number): number
   Integrate(a: number, b: number, m: number, n: number): Decimal;
 }
+
+export interface Vector2 {
+  x: number;
+  y: number;
+}

@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { fade } from "svelte/transition";
 	import {
 		AchievementsData,
 		UnlockAchievement,
 		type IAchievement,
-	} from "../../Game/Achievements/Achievements.svelte";
+	} from "../../../Game/Achievements/Achievements.svelte.ts";
 
 	let data = $state<IAchievement>();
 	let visible = $state(false);
