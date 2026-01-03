@@ -2,7 +2,7 @@ import { Soap, SoapData, SoapType } from "./Soap/Soap.svelte.ts";
 import { Update } from "./Game.svelte.ts";
 import { SaveSystem, type Saveable } from "./Saves.ts";
 import { Decimal } from "./Shared/BreakInfinity/Decimal.svelte";
-import { UpgradesKey } from "./Soap/Upgrades.svelte.ts";
+import { UpgradesData, UpgradesKey } from "./Soap/Upgrades.svelte.ts";
 import { SvelteMap } from "svelte/reactivity";
 
 interface IPlayer {
@@ -11,7 +11,6 @@ interface IPlayer {
   SC: number;
   Soaps: SvelteMap<SoapType, Soap>;
   Bulk: Bulk;
-  SoapUpgrades: SvelteMap<UpgradesKey, number>
 }
 
 class PlayerClass implements Saveable {
@@ -21,29 +20,16 @@ class PlayerClass implements Saveable {
     SC: 0,
     Soaps: new SvelteMap<SoapType, Soap>(),
     Bulk: Bulk.One,
-    SoapUpgrades: new SvelteMap(),
   });
 
   constructor() {
-    this._player.Soaps.set(SoapType.Red, new Soap(SoapData[0]))
-    Object.values(UpgradesKey).forEach((val) => {
-      if (typeof val === 'number')
-        return;
-
-      this._player.SoapUpgrades.set(val as unknown as UpgradesKey, 0);
-    })
-
-    //      Object.values(SoapType)
-    //      .forEach((soap, idx) => {
-    //        if (typeof soap === 'number')
-    //          return;
-    //        const newSoap = new Soap(SoapData[0]);
-    //        this._player.Soaps.set(soap as unknown as SoapType, newSoap);
-    //      })
-  }
-
-  get SoapUpgrades() {
-    return this._player.SoapUpgrades;
+    Object.values(SoapType)
+      .forEach((soap, idx) => {
+        if (typeof soap === 'number')
+          return;
+        const newSoap = new Soap(SoapData[idx]);
+        this._player.Soaps.set(soap as unknown as SoapType, newSoap);
+      })
   }
 
   get Bulk() {

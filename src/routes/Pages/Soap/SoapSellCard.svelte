@@ -2,12 +2,18 @@
 	import type { Soap } from "../../../Game/Soap/Soap.svelte";
 	import { Bulk, Player } from "../../../Game/Player.svelte";
 	import { Decimal } from "../../../Game/Shared/BreakInfinity/Decimal.svelte";
+	import {
+		UpgradesData,
+		UpgradesKey,
+	} from "../../../Game/Soap/Upgrades.svelte";
+	import { log } from "console";
 
 	let { soap }: { soap: Soap } = $props();
 	let amount = $state(Decimal.ONE);
 	let can = $derived(amount <= soap.Amount ? "" : "bg-gray-100");
 
 	$effect(() => {
+		log(soap.Type);
 		switch (Player.Bulk) {
 			case Bulk.One:
 				amount = Decimal.ONE;
@@ -27,13 +33,36 @@
 		}
 	});
 
+	let holdUpgradeUnlocked = $derived(
+		UpgradesData.get(UpgradesKey.Hold)!.count > 0,
+	);
+
 	function Sell() {
 		if (soap.CanSell(amount)) {
 			soap.Sell(amount);
 		}
 	}
 
+	function HoldSell() {
+		if (holdUpgradeUnlocked) {
+			Sell();
+		}
+	}
+
 	function Consume() {}
+
+	function HoldConsume() {
+		if (holdUpgradeUnlocked) {
+			Consume();
+		}
+	}
+	function Offer() {}
+
+	function HoldOffer() {
+		if (holdUpgradeUnlocked) {
+			Offer();
+		}
+	}
 </script>
 
 <div class="border m-2 p-2 min-w-5/12">
@@ -43,11 +72,15 @@
 		<h1 class="ml-auto">Quality: {soap.Quality}</h1>
 	</div>
 	<div class="flex flex-row">
-		<button class="w-full {can}" onclick={Sell}>Sell {amount.format()}x</button>
-		<button class="w-full {can} mr-1 ml-1" onclick={Consume}
-			>Eat {amount.format()}x</button
+		<button class="w-full {can}" onmousedown={HoldSell} onclick={Sell}
+			>Sell {amount.format()}x</button
 		>
-		<button class="w-full {can}" onclick={Consume}
+		<button
+			class="w-full {can} mr-1 ml-1"
+			onclick={Consume}
+			onmousedown={HoldConsume}>Eat {amount.format()}x</button
+		>
+		<button class="w-full {can}" onclick={Offer} onmousedown={HoldOffer}
 			>Offer {amount.format()}x</button
 		>
 	</div>

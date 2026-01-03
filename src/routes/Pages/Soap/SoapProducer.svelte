@@ -3,6 +3,7 @@
 	import { Update } from "../../../Game/Game.svelte";
 	import { Bulk, Player } from "../../../Game/Player.svelte";
 	import { SoapProducer } from "./SoapProducer.svelte.ts";
+	import { log } from "console";
 
 	let { type }: { type: SoapType } = $props();
 	let producer = $derived(new SoapProducer(type));
@@ -11,17 +12,7 @@
 	let width = $derived(soap?.Progress.div(soap.MaxProgress).mul(100));
 
 	let speedCostAmt = $state(1);
-	let speedCanBuy = $derived(
-		producer.GetSpeedCost(speedCostAmt) > Player.Money
-			? "bg-gray-100 hover:cursor-default"
-			: "hover:cursor-pointer",
-	);
 	let qualityCostAmt = $state(1);
-	let qualityCanBuy = $derived(
-		producer.GetQualityCost(qualityCostAmt) > Player.Money
-			? "bg-gray-100 hover:cursor-default"
-			: "hover:cursor-pointer",
-	);
 
 	$effect(() => {
 		switch (Player.Bulk) {
@@ -62,8 +53,20 @@
 				qualityCostAmt = 1;
 				break;
 		}
-		qualityCanBuy = qualityCanBuy;
-		speedCanBuy = speedCanBuy;
+	});
+
+	let qualityCanBuy = $state("");
+	let speedCanBuy = $state("");
+	$effect(() => {
+		qualityCanBuy =
+			producer.GetQualityCost(qualityCostAmt) > Player.Money
+				? "bg-gray-100 hover:cursor-default"
+				: "hover:cursor-pointer";
+
+		speedCanBuy =
+			producer.GetSpeedCost(speedCostAmt) > Player.Money
+				? "bg-gray-100 hover:cursor-default"
+				: "hover:cursor-pointer";
 	});
 
 	Update.add(() => {

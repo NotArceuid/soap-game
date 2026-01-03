@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { log } from "console";
 	import { Bulk, Player } from "../../../Game/Player.svelte";
 	import {
 		UpgradesData,
 		UpgradesKey,
-		type IUpgrades,
+		type BaseUpgrade,
 	} from "../../../Game/Soap/Upgrades.svelte";
 
-	let currUpgrade = $state<[UpgradesKey, IUpgrades]>();
-	let count = $derived(Player.SoapUpgrades.get(currUpgrade?.[0] ?? 0));
-	function hoverUpgrade(upgrade: [UpgradesKey, IUpgrades]) {
+	let currUpgrade = $state<[UpgradesKey, BaseUpgrade]>();
+	let count = $derived(UpgradesData.get(currUpgrade?.[0] ?? 0)?.count);
+	function hoverUpgrade(upgrade: [UpgradesKey, BaseUpgrade]) {
 		currUpgrade = upgrade;
 	}
 
@@ -41,7 +40,7 @@
 		currUpgrade[1].buyAmount = amount;
 	});
 
-	function buyUpgrades(upgrade: IUpgrades) {}
+	function buyUpgrades(upgrade: BaseUpgrade) {}
 </script>
 
 <div class="absolute m-2 w-full flex flex-col h-8/12">

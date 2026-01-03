@@ -6,22 +6,36 @@ import { ExpPolynomial } from "../Shared/Math.ts";
 import { Player } from "../Player.svelte.ts";
 
 export const UnlockUpgrades: InvokeableEvent<UpgradesKey> = new InvokeableEvent<UpgradesKey>();
-export const UpgradesData: SvelteMap<UpgradesKey, IUpgrades> = new SvelteMap<UpgradesKey, IUpgrades>();
+export const UpgradesData: SvelteMap<UpgradesKey, BaseUpgrade> = new SvelteMap<UpgradesKey, BaseUpgrade>();
 
-export enum UpgradesKey { Bulk, MaxBulk, SpeedUpgrade, QualityUpgrade, OCD, TierUp, OrangeSoap, EatRedSoap, Cat }
+export enum UpgradesKey {
+  Hold, Bulk, MaxBulk, SpeedUpgrade,
+  QualityUpgrade, OCD, TierUp, OrangeSoap,
+  EatRedSoap, Cat
+}
 
-export interface IUpgrades {
-  name: string,
-  description: () => ReactiveText,
-  maxCount: number,
-  Requirements: [() => ReactiveText, () => boolean][];
-  ShowCondition: Array<() => boolean>;
+export abstract class BaseUpgrade {
+  abstract name: string;
+  abstract description: () => ReactiveText;
+  abstract maxCount: number;
+  abstract Requirements: [() => ReactiveText, () => boolean][];
+  abstract ShowCondition: Array<() => boolean>;
+  count: number = $state(0)
+
   getMax?: () => number;
   unlocked?: boolean;
   buyAmount?: number;
 }
 
-class BulkUpgrade implements IUpgrades {
+class HoldUpgrade extends BaseUpgrade {
+  name = "Hold to sell";
+  description = () => new ReactiveText("Unlocks the ability to sell soap by holding the button ");
+  maxCount = 1;
+  Requirements = [[() => new ReactiveText("Cost: 10"), () => Player.Money.gte(10)]] as [() => ReactiveText, () => boolean][];
+  ShowCondition = [() => true];
+}
+
+class BulkUpgrade extends BaseUpgrade {
   name = "Grr my fingers hurt!!";
   description = () => new ReactiveText("Unlocks Bulk");
   maxCount = 1;
@@ -29,7 +43,7 @@ class BulkUpgrade implements IUpgrades {
   ShowCondition = [() => true];
 }
 
-class MaxBulkUpgrade implements IUpgrades {
+class MaxBulkUpgrade extends BaseUpgrade {
   name = "My fingers still hurt!!";
   description = () => new ReactiveText("Unlocks Max Buttons in bulk");
   maxCount = 1;
@@ -37,63 +51,61 @@ class MaxBulkUpgrade implements IUpgrades {
   ShowCondition = [() => true];
 }
 
-class SpeedUpgrade implements IUpgrades {
+class SpeedUpgrade extends BaseUpgrade {
   name = "It's too slow!!";
   description = () => new ReactiveText("Improves Producer Speed by 100%");
   unlocked = true;
   maxCount = 700;
   buyAmount = $state(1);
   private speedCost = new ExpPolynomial(new Decimal(100), new Decimal(1.15));
-  private level = () => Player.SoapUpgrades.get(UpgradesKey.SpeedUpgrade) ?? 0;
 
   Requirements = [
     [
       () => {
-        return new ReactiveText(`Cost: ${this.speedCost.Integrate(this.level(), this.level() + this.buyAmount).format()}`)
+        return new ReactiveText(`Cost: ${this.speedCost.Integrate(this.count, this.count + this.buyAmount).format()}`)
       },
       () => {
-        return Player.Money.gte(this.speedCost.Integrate(this.level(), this.level() + this.buyAmount)) && this.level() < this.maxCount
+        return Player.Money.gte(this.speedCost.Integrate(this.count, this.count + this.buyAmount)) && this.count < this.maxCount
       }
     ]
   ] as [() => ReactiveText, () => boolean][];
 
   getMax = () => {
-    let amt = this.speedCost.BuyMax(Player.Money, this.level());
+    let amt = this.speedCost.BuyMax(Player.Money, this.count);
     return amt == -1 ? 1 : amt;
   }
 
   ShowCondition = [() => true];
 }
 
-class QualityUpgrade implements IUpgrades {
+class QualityUpgrade extends BaseUpgrade {
   name = "Not rich enough!!";
   description = () => new ReactiveText("Improves Producer Quality by 100%");
   unlocked = true;
   maxCount = 600;
   buyAmount = $state(1);
-  private level = () => Player.SoapUpgrades.get(UpgradesKey.QualityUpgrade) ?? 0;
   private qualityCost = new ExpPolynomial(new Decimal(100), new Decimal(1.17));
 
   Requirements = [
     [
       () => {
-        return new ReactiveText(`Cost: ${this.qualityCost.Integrate(this.level(), this.level() + this.buyAmount).format()}`)
+        return new ReactiveText(`Cost: ${this.qualityCost.Integrate(this.count, this.count + this.buyAmount).format()}`)
       },
       () => {
-        return Player.Money.gte(this.qualityCost.Integrate(this.level(), this.level() + this.buyAmount)) && this.level() < this.maxCount
+        return Player.Money.gte(this.qualityCost.Integrate(this.count, this.count + this.buyAmount)) && this.count < this.maxCount
       }
     ]
   ] as [() => ReactiveText, () => boolean][];
 
   getMax = () => {
-    let amt = this.qualityCost.BuyMax(Player.Money, this.level());
+    let amt = this.qualityCost.BuyMax(Player.Money, this.count);
     return amt == -1 ? 1 : amt;
   }
 
   ShowCondition = [() => true];
 }
 
-class OCDUpgrade implements IUpgrades {
+class OCDUpgrade extends BaseUpgrade {
   name = "Do you have OCD?";
   description = () => new ReactiveText("Unlock OCD Buy");
   maxCount = 1;
@@ -101,7 +113,7 @@ class OCDUpgrade implements IUpgrades {
   ShowCondition = [() => true];
 }
 
-class TierUpUpgrade implements IUpgrades {
+class TierUpUpgrade extends BaseUpgrade {
   name = "Promotions";
   description = () => new ReactiveText("Unlock Tier up");
   maxCount = 1;
@@ -109,7 +121,7 @@ class TierUpUpgrade implements IUpgrades {
   ShowCondition = [() => true];
 }
 
-class OrangeSoapUpgrade implements IUpgrades {
+class OrangeSoapUpgrade extends BaseUpgrade {
   name = "Unlock orange soap";
   description = () => new ReactiveText("I hope they don't contain any harmful chemicals");
   maxCount = 1;
@@ -117,7 +129,7 @@ class OrangeSoapUpgrade implements IUpgrades {
   ShowCondition = [() => true];
 }
 
-class EatRedSoapUpgrade implements IUpgrades {
+class EatRedSoapUpgrade extends BaseUpgrade {
   name = "Learn to eat red soap";
   description = () => new ReactiveText("Why would you do that?");
   maxCount = 1;
@@ -125,7 +137,7 @@ class EatRedSoapUpgrade implements IUpgrades {
   ShowCondition = [() => true];
 }
 
-class CatUpgrade implements IUpgrades {
+class CatUpgrade extends BaseUpgrade {
   name = "Buy a.. cat?";
   description = () => new ReactiveText("Quite an expensive kitten");
   maxCount = 1;
@@ -133,6 +145,7 @@ class CatUpgrade implements IUpgrades {
   ShowCondition = [() => true];
 }
 
+UpgradesData.set(UpgradesKey.Hold, new HoldUpgrade());
 UpgradesData.set(UpgradesKey.Bulk, new BulkUpgrade());
 UpgradesData.set(UpgradesKey.MaxBulk, new MaxBulkUpgrade());
 UpgradesData.set(UpgradesKey.SpeedUpgrade, new SpeedUpgrade());
