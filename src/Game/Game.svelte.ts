@@ -125,8 +125,9 @@ export class GameLoop {
   }
 
   restart() {
-    this.stop();
-    this.start();
+    this.stop()
+    this.options.step = 500 / (DevHacks.speedhack ? 100 : 10);
+    this.start()
   }
 }
 
@@ -136,3 +137,5 @@ export const DevHacks = $state({
   skipUnlock: false,
   skipRequirements: false,
 });
+
+export const MainLoop = new GameLoop();

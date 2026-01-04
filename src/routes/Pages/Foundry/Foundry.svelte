@@ -8,7 +8,7 @@
 
 	let currUpgrade: IUpgradesInfo | undefined = $state();
 	let canBuy = $derived(
-		currUpgrade?.Requirements?.every((t) => t()) ? "" : "bg-gray-200",
+		currUpgrade?.Requirements?.every((t) => t()) ? "" : "bg-gray-100",
 	);
 
 	function hoverUpgrade(upgrade: IUpgradesInfo) {

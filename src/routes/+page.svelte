@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MainPageHandler, Pages } from "./page.svelte.ts";
-	import { DevHacks, GameLoop } from "../Game/Game.svelte.ts";
+	import { DevHacks, MainLoop } from "../Game/Game.svelte.ts";
 	import { SaveSystem } from "../Game/Saves.ts";
 	import { dev } from "$app/environment";
 	import { ColorTheme } from "./Pages/Settings.svelte.ts";
@@ -11,15 +11,12 @@
 	import Howtfdoiplay from "./Pages/guide/howtfdoiplay.svelte";
 	import Cat from "./Pages/Cat/Cat.svelte";
 	import Achievements from "./Pages/Achievements/Achievements.svelte";
-	import NavBar from "./Pages/Components/NavBar.svelte";
-	import CurrenciesPanel from "./Pages/Components/CurrenciesPanel.svelte";
-	import NotificationHandler from "./Pages/Components/NotificationHandler.svelte";
+	import CurrenciesPanel from "./Components/CurrenciesPanel.svelte";
+	import NotificationHandler from "./Components/NotificationHandler.svelte";
+	import NavBar from "./Components/NavBar.svelte";
 
 	let gameRunning = true;
-	let gameloop: GameLoop;
-
-	gameloop = new GameLoop();
-	gameloop.start();
+	MainLoop.start();
 
 	async function LoadPlayerData() {
 		let playerSaveData =
@@ -87,9 +84,7 @@
 					type="checkbox"
 					bind:checked={DevHacks.speedhack}
 					onchange={() => {
-						gameloop.stop();
-						gameloop = new GameLoop();
-						gameloop.start();
+						MainLoop.restart();
 					}}
 				/>
 				<input type="checkbox" bind:checked={DevHacks.skipMenu} />
