@@ -55,19 +55,16 @@
 		}
 	});
 
-	let qualityCanBuy = $state("");
-	let speedCanBuy = $state("");
-	Render.add(() => {
-		qualityCanBuy =
-			producer.GetQualityCost(qualityCostAmt) > Player.Money
-				? "bg-gray-100 hover:cursor-default"
-				: "hover:cursor-pointer";
-
-		speedCanBuy =
-			producer.GetSpeedCost(speedCostAmt) > Player.Money
-				? "bg-gray-100 hover:cursor-default"
-				: "hover:cursor-pointer";
-	});
+	let qualityCanBuy = $derived(
+		producer.GetQualityCost(qualityCostAmt).gt(Player.Money)
+			? "bg-gray-100 hover:cursor-default"
+			: "hover:cursor-pointer",
+	);
+	let speedCanBuy = $derived(
+		producer.GetSpeedCost(speedCostAmt).gt(Player.Money)
+			? "bg-gray-100 hover:cursor-default"
+			: "hover:cursor-pointer",
+	);
 
 	Update.add(() => {
 		if (producer.Unlocked) {

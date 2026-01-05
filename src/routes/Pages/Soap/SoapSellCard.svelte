@@ -6,12 +6,10 @@
 		UpgradesData,
 		UpgradesKey,
 	} from "../../../Game/Soap/Upgrades.svelte";
-	import { log } from "console";
 
 	let { soap }: { soap: Soap } = $props();
 	let amount = $state(Decimal.ONE);
-	let can = $derived(amount <= soap.Amount ? "" : "bg-gray-100");
-
+	let can = $derived(amount.lt(soap.Amount) ? "" : "bg-gray-100");
 	$effect(() => {
 		switch (Player.Bulk) {
 			case Bulk.One:
@@ -43,13 +41,13 @@
 	);
 
 	function Sell(): void {
+		if (soap.Amount.lt(amount)) return;
 		if (soap.CanSell(amount)) {
 			soap.Sell(amount);
 		}
 	}
 
 	function start(event: MouseEvent | TouchEvent, type: number): void {
-		log(holdUpgradeUnlocked + " " + (event instanceof MouseEvent) + " ");
 		if (
 			holdUpgradeUnlocked &&
 			event instanceof MouseEvent &&
