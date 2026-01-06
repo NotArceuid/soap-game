@@ -4,7 +4,6 @@ import { Decimal } from "../../../Game/Shared/BreakInfinity/Decimal.svelte";
 import { ExpPolynomial } from "../../../Game/Shared/Math";
 import { Multipliers } from "../../../Game/Shared/Multipliers";
 import { SaveSystem, type ISaveable } from "../../../Game/Saves";
-import { count, log } from "console";
 import { UpgradesData, UpgradesKey } from "../../../Game/Soap/Upgrades.svelte";
 
 export class SoapProducer implements SoapProducerProps, ISaveable {
@@ -58,18 +57,18 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
 
   get Quality() {
     let amt = Multipliers.QualityMultiplier.Get()
-      .mul(1 + (this.QualityCount * 1.0) * Math.pow(2, Math.floor(this.QualityCount / 25))).div(3)
-    // Same as below
-    amt = Decimal.max(amt.mul(this.Tier * 7.5), amt);
+      .mul(1 + (this.QualityCount * 1.0) * Math.pow(2, Math.floor(this.QualityCount / 25))).div(3) // Multi from upgrade
+      .mul(UpgradesData.get(UpgradesKey.QualityUpgrade)!.count + 1)
+      .mul(this.Tier !== 0 ? this.Tier * 7.5 : 1) // Multi from tier
     return amt;
   }
 
   get Speed() {
     let amt = Multipliers.SpeedMultiplier.Get()
-      // Multiplier from upgrade
-      .mul(1 + (this.SpeedCount * 1.0) * Math.pow(2, Math.floor(this.SpeedCount / 25)))
-    // Multiplier from tier, i did this so that it doesn't return 0 
-    amt = Decimal.max(amt.div(this.Tier * 5), amt);
+      .mul(1 + (this.SpeedCount * 1.0) * Math.pow(2, Math.floor(this.SpeedCount / 25))) // Multi from upgrade 
+      .mul(UpgradesData.get(UpgradesKey.SpeedUpgrade)!.count + 1)
+      .div(this.Tier !== 0 ? this.Tier * 5 : 1) // Multi from tier 
+
     return amt
   }
 

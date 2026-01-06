@@ -10,26 +10,19 @@
 	let soap = $derived(Player.Soap.get(type)!);
 	let width = $derived(soap?.Progress.div(soap.MaxProgress).mul(100));
 
-	let speedCostAmt = $state(1);
-	let qualityCostAmt = $state(1);
+	const speedCostAmt = $derived(
+		Math.min(
+			Player.BulkAmount,
+			producer.SpeedFormula.BuyMax(Player.Money, producer.SpeedCount),
+		),
+	);
 
-	$effect(() => {
-		const speedMax = producer.SpeedFormula.BuyMax(
-			Player.Money,
-			producer.SpeedCount,
-		);
-
-		const speedAmt = speedMax >= 1 ? speedMax : 1;
-
-		const qualityMax = producer.QualityFormula.BuyMax(
-			Player.Money,
-			producer.QualityCount,
-		);
-		const qualityAmt = qualityMax >= 1 ? qualityMax : 1;
-
-		speedCostAmt = Math.min(Player.BulkAmount, speedAmt);
-		qualityCostAmt = Math.min(Player.BulkAmount, qualityAmt);
-	});
+	const qualityCostAmt = $derived(
+		Math.min(
+			Player.BulkAmount,
+			producer.QualityFormula.BuyMax(Player.Money, producer.QualityCount),
+		),
+	);
 
 	let qualityCanBuy = $derived(
 		producer.GetQualityCost(qualityCostAmt).gt(Player.Money)
@@ -98,9 +91,11 @@
 				</div>
 			</div>
 			<div class="flex flex-row mt-3">
-				<h1>Quality: {producer.QualityCount}</h1>
-				<h1 class="ml-auto">Speed: {producer.SpeedCount}</h1>
-				<h1 class="ml-auto">Produced: {producer.QualityCount}</h1>
+				<h1>Quality: {producer.Quality.format()}</h1>
+				<h1 class="ml-auto">Speed: {producer.Speed.format()}</h1>
+				<h1 class="ml-auto">
+					Produced: {producer.Soap?.ProducedAmount.format()}
+				</h1>
 			</div>
 		{:else}
 			<div class="flex flex-row">

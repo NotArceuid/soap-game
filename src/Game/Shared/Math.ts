@@ -13,7 +13,7 @@ export abstract class EquationBase implements IEquation {
     };
 
     if (fx(1).gt(input)) {
-      return -1;
+      return 1;
     }
 
     let bound = 1;
@@ -42,7 +42,6 @@ export abstract class EquationBase implements IEquation {
     return result;
   }
 }
-
 
 export function RiemannSum(a: number, b: number, fx: (i: number) => Decimal, N = 100): Decimal {
   let dx = (b - a) / (N);
