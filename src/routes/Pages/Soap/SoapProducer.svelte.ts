@@ -57,17 +57,20 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
   }
 
   get Quality() {
-    return Multipliers.QualityMultiplier.Get()
+    let amt = Multipliers.QualityMultiplier.Get()
       .mul(1 + (this.QualityCount * 1.0) * Math.pow(2, Math.floor(this.QualityCount / 25))).div(3)
-      .mul(UpgradesData.get(UpgradesKey.TierUp)!.count > 1 ? this.Tier * 7.5 : 1);
+    // Same as below
+    amt = Decimal.max(amt.mul(this.Tier * 7.5), amt);
+    return amt;
   }
 
   get Speed() {
-    return Multipliers.SpeedMultiplier.Get()
+    let amt = Multipliers.SpeedMultiplier.Get()
       // Multiplier from upgrade
       .mul(1 + (this.SpeedCount * 1.0) * Math.pow(2, Math.floor(this.SpeedCount / 25)))
-      // Multiplier from tier
-      .div(UpgradesData.get(UpgradesKey.TierUp)!.count > 1 ? this.Tier * 5 : 1);
+    // Multiplier from tier, i did this so that it doesn't return 0 
+    amt = Decimal.max(amt.div(this.Tier * 5), amt);
+    return amt
   }
 
   get RankUpReq() {

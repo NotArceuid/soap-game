@@ -1,41 +1,7 @@
 import { Decimal } from "./BreakInfinity/Decimal.svelte";
 
-export function RiemannSum(a: number, b: number, fx: (i: number) => Decimal, N = 100): Decimal {
-  let dx = (b - a) / (N);
-  let sum = Decimal.ZERO;
-
-  for (let i = 0; i < N; i++) {
-    const x = a + (i + 0.5) * dx
-    sum = sum.add(fx(x).mul(dx));
-  }
-
-  return sum;
-}
-
-export class ExpPolynomial {
-  public a: Decimal;
-  public b: Decimal;
-
-  constructor(a: Decimal, b: Decimal) {
-    this.a = a;
-    this.b = b;
-  }
-
-  public Integrate(lower: number, upper: number): Decimal {
-    const Mlower = new Decimal(lower);
-    const Nupper = new Decimal(upper);
-
-    const lnB = this.b.ln(); // ln(b)
-    const invLnB = lnB ** -1; // 1/ln(b)
-
-    const F = (x: Decimal): Decimal => {
-      const bPowX = this.b.pow(x); // b^x
-      return this.a.mul(bPowX).div(lnB).mul(x.sub(invLnB));
-    };
-
-    return F(Nupper).sub(F(Mlower));
-  }
-
+export abstract class EquationBase implements IEquation {
+  abstract Integrate(lower: number, upper: number): Decimal;
   /*
   * @param input: The input value e.g Player.Money
   * @param level: The level, e.g Upgrade Level 
@@ -77,10 +43,70 @@ export class ExpPolynomial {
   }
 }
 
+
+export function RiemannSum(a: number, b: number, fx: (i: number) => Decimal, N = 100): Decimal {
+  let dx = (b - a) / (N);
+  let sum = Decimal.ZERO;
+
+  for (let i = 0; i < N; i++) {
+    const x = a + (i + 0.5) * dx
+    sum = sum.add(fx(x).mul(dx));
+  }
+
+  return sum;
+}
+
+// formula: ax * b^x 
+export class ExpPolynomial extends EquationBase {
+  public a: Decimal;
+  public b: Decimal;
+
+  constructor(a: Decimal, b: Decimal) {
+    super();
+
+    this.a = a;
+    this.b = b;
+  }
+
+  public Integrate(lower: number, upper: number): Decimal {
+
+    const lnB = this.b.ln(); // ln(b)
+    const invLnB = lnB ** -1; // 1/ln(b)
+
+    const F = (x: number): Decimal => {
+      const bPowX = this.b.pow(x); // b^x
+      return this.a.mul(bPowX).div(lnB).mul(x - invLnB);
+    };
+
+    return F(upper).sub(F(lower));
+  }
+}
+
+// formula: ab^x
+export class Exponential extends EquationBase {
+  public a: Decimal;
+  public b: Decimal;
+  constructor(a: Decimal, b: Decimal) {
+    super();
+
+    this.a = a;
+    this.b = b;
+  }
+
+  Integrate(lower: number, upper: number): Decimal {
+    const f = (x: number): Decimal => {
+      const lnB = Decimal.ln(this.b);
+      return this.a.mul(this.b.pow(x)).div(lnB);
+    };
+
+    return f(upper).minus(f(lower));
+  }
+}
+
 export interface IEquation {
   BinarySearch(low: number, high: number, input: Decimal, costFunction: (x: number) => Decimal): number
   BuyMax(input: Decimal, level: number, a: number, b: number): number
-  Integrate(a: number, b: number, m: number, n: number): Decimal;
+  Integrate(lower: number, upper: number): Decimal;
 }
 
 export interface Vector2 {

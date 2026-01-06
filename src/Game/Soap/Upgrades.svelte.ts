@@ -29,7 +29,7 @@ export abstract class BaseUpgrade implements IUpgradesInfo {
   count: number = $state(0)
   getMax?: () => number = undefined;
   unlocked: boolean = $state(false);
-  buyAmount: number = $state(0);
+  buyAmount: number = $state(1);
 }
 
 class HoldButtonUpgrade extends BaseUpgrade {
@@ -44,15 +44,17 @@ class QualityUpgrade extends BaseUpgrade {
   description = () => new ReactiveText("Improves Producer Quality by 100%");
   unlocked = true;
   maxCount = 600;
-  buyAmount = $state(1);
-  private qualityCost = new ExpPolynomial(new Decimal(100), new Decimal(1.17));
 
+  private qualityCost = new ExpPolynomial(new Decimal(100), new Decimal(1.17));
+  get cost() {
+    return this.qualityCost.Integrate(this.count, this.count + this.buyAmount);
+  }
   Requirements = [
     () => {
-      return new ReactiveText(`Cost: ${this.qualityCost.Integrate(this.count, this.count + this.buyAmount).format()}`)
+      return new ReactiveText(this.cost.format())
     },
     () => {
-      return Player.Money.gte(this.qualityCost.Integrate(this.count, this.count + this.buyAmount)) && this.count < this.maxCount
+      return Player.Money.gte(this.cost) && this.count < this.maxCount
     }
   ] as [() => ReactiveText, () => boolean];
 
@@ -68,15 +70,18 @@ class SpeedUpgrade extends BaseUpgrade {
   description = () => new ReactiveText("Improves Producer Speed by 100%");
   unlocked = true;
   maxCount = 700;
-  buyAmount = $state(1);
+
   private speedCost = new ExpPolynomial(new Decimal(100), new Decimal(1.15));
+  get cost() {
+    return this.speedCost.Integrate(this.count, this.count + this.buyAmount);
+  }
 
   Requirements = [
     () => {
-      return new ReactiveText(`Cost: ${this.speedCost.Integrate(this.count, this.count + this.buyAmount).format()}`)
+      return new ReactiveText(this.cost.format())
     },
     () => {
-      return Player.Money.gte(this.speedCost.Integrate(this.count, this.count + this.buyAmount)) && this.count < this.maxCount
+      return Player.Money.gte(this.cost) && this.count < this.maxCount
     }
   ] as [() => ReactiveText, () => boolean];
 
@@ -86,23 +91,36 @@ class SpeedUpgrade extends BaseUpgrade {
   }
 
   ShowCondition = () => true;
+
 }
+
 class RedSoapAutoSellter extends BaseUpgrade {
   name = "Red soap autosell";
   description = () => new ReactiveText("Happy now? This upgrades fires 1 time every 5s and will decrease by 0.5s with each subsequence upgrade.. hehe");
   maxCount = 9;
+
   get cost(): Decimal {
-    return new Decimal(250).mul(new Decimal(2).pow(UpgradesData.get(UpgradesKey.RedSoapAutoSeller)!.count));
+    let amt = Decimal.ZERO;
+    for (let i = 0; i < this.buyAmount; i++) {
+      amt = amt.add(new Decimal(250).mul(new Decimal(2).pow(i)))
+    }
+    return amt;
   }
+
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.greaterThan(this.cost)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
 }
+
 class BulkUpgrade extends BaseUpgrade {
   name = "I Want More!!!";
   description = () => new ReactiveText("Increases Bulk Limit by 1 per level");
   maxCount = 9;
   get cost(): Decimal {
-    return new Decimal(10000).mul(new Decimal(100).pow(UpgradesData.get(UpgradesKey.BulkUpgrade)!.count));
+    let amt = Decimal.ZERO;
+    for (let i = 0; i < this.buyAmount; i++) {
+      amt = amt.add(new Decimal(10000).mul(new Decimal(100).pow(i)))
+    }
+    return amt;
   }
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.greaterThan(this.cost)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
