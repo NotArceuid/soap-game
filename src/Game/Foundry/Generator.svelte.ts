@@ -51,7 +51,7 @@ function SaveData() {
 
 SaveSystem.LoadCallback(saveKey, (data) => LoadData(data as GeneratorSaveData[]));
 function LoadData(data: GeneratorSaveData[]) {
-  data.forEach((ele) => {
+  Array.prototype.forEach.call(data, (ele) => {
     let currGenerator = GeneratorsData.get(ele.generatorsKey)!;
     currGenerator.count = ele.count;
     currGenerator.unlocked = ele.unlocked;

@@ -2,6 +2,7 @@ import { Soap, SoapData, SoapType, type SoapSaveData } from "./Soap/Soap.svelte.
 import { SaveSystem, type ISaveable } from "./Saves.ts";
 import { Decimal } from "./Shared/BreakInfinity/Decimal.svelte";
 import { SvelteMap } from "svelte/reactivity";
+import { log } from "console";
 
 interface IPlayer {
   Name: string;
@@ -76,15 +77,15 @@ class PlayerClass implements ISaveable {
 
   loadSaveData(data: IPlayer): void {
     this._player.Name = data.Name;
-    this._player.Money = data.Money;
+    this._player.Money = new Decimal(data.Money);
 
     let soap = data.Soaps as unknown as SoapSaveData[];
     soap.forEach(data => {
       let curSoap = this._player.Soaps.get(data.type)!;
-      curSoap.Progress = data.progress;
+      curSoap.Progress = new Decimal(data.progress);
       curSoap.Unlocked = data.unlocked;
-      curSoap.Amount = data.amount;
-      curSoap.ProducedAmount = data.producedAmount;
+      curSoap.Amount = new Decimal(data.amount);
+      curSoap.ProducedAmount = new Decimal(data.producedAmount);
       this._player.Soaps.set(data.type, curSoap);
     })
   }

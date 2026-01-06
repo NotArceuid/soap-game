@@ -190,7 +190,7 @@ function SaveData() {
 
 SaveSystem.LoadCallback(saveKey, (data) => LoadData(data as UpgradeSaveData[]));
 function LoadData(data: UpgradeSaveData[]) {
-  data.forEach((ele) => {
+  Array.prototype.forEach.call(data, (ele) => {
     let currUpgrade = UpgradesData.get(ele.upgradesKey)!;
     currUpgrade.count = ele.count;
     currUpgrade.unlocked = ele.unlocked;
