@@ -70,17 +70,21 @@
 					<button
 						onclick={() => producer.UpgradeQuality(qualityCostAmt)}
 						class={qualityCanBuy}
-						>Upgrade Quality {qualityCostAmt}
+						>Upgrade Quality +{qualityCostAmt}
 						<div>
-							Cost: {producer.GetQualityCost(qualityCostAmt).format()}
+							({producer.QualityCount}) Cost: {producer
+								.GetQualityCost(qualityCostAmt)
+								.format()}
 						</div></button
 					>
 					<button
-						class="ml-2 mr-2 {speedCanBuy}"
+						class="ml-1 mr-1 {speedCanBuy}"
 						onclick={() => producer.UpgradeSpeed(speedCostAmt)}
-						>Upgrade Speed {speedCostAmt}
+						>Upgrade Speed +{speedCostAmt}
 						<div>
-							Cost: {producer.GetSpeedCost(speedCostAmt).format()}
+							({producer.SpeedCount}) Cost: {producer
+								.GetSpeedCost(speedCostAmt)
+								.format()}
 						</div></button
 					>
 					<button onclick={producer.TierUp} class={canRankUp}

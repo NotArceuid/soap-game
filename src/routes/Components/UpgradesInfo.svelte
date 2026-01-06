@@ -1,14 +1,11 @@
 <script lang="ts">
-	import { Render } from "../../Game/Game.svelte.ts";
 	import { Player } from "../../Game/Player.svelte.ts";
 	import type { IUpgradesInfo } from "./UpgradesInfo.svelte.ts";
 
 	let { upgrade }: { upgrade?: IUpgradesInfo } = $props();
-	let canBuy = $state("");
-
-	Render.add((_) => {
-		canBuy = upgrade?.Requirements?.every((t) => t()) ? "" : "bg-gray-100";
-	});
+	let canBuy = $derived(
+		upgrade?.Requirements?.every((t) => t()) ? "" : "bg-gray-100",
+	);
 
 	let amount = $state(1);
 	$effect(() => {

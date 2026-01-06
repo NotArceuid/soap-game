@@ -2,7 +2,6 @@ import { Soap, SoapData, SoapType, type SoapSaveData } from "./Soap/Soap.svelte.
 import { SaveSystem, type ISaveable } from "./Saves.ts";
 import { Decimal } from "./Shared/BreakInfinity/Decimal.svelte";
 import { SvelteMap } from "svelte/reactivity";
-import { log } from "console";
 
 interface IPlayer {
   Name: string;

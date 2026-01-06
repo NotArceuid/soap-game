@@ -68,7 +68,7 @@ class SaveManager {
 
   private takeSnapshot(): Record<string, unknown> {
     const allData: Record<string, unknown> = {};
-    this.snapshotCallbacks.forEach((snapshotFn, key, map) => {
+    this.snapshotCallbacks.forEach((snapshotFn, key, _) => {
       try {
         allData[key] = snapshotFn();
       } catch (error) {
@@ -105,7 +105,7 @@ class SaveManager {
   private compressString(str: string): string {
     try {
       if (typeof btoa !== "undefined") {
-        return btoa(unescape(encodeURIComponent(str)));
+        return btoa(encodeURIComponent(str));
       } else {
         return Buffer.from(str, "utf8").toString("base64");
       }
@@ -117,7 +117,7 @@ class SaveManager {
   private decompressString(str: string): string {
     try {
       if (typeof atob !== "undefined") {
-        return decodeURIComponent(escape(atob(str)));
+        return decodeURIComponent(atob(str));
       } else {
         return Buffer.from(str, "base64").toString("utf8");
       }

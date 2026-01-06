@@ -33,6 +33,7 @@ export class Soap implements ISoapData {
 
   public SoapMade(gain: Decimal) {
     this.ProducedAmount = this.ProducedAmount.add(gain);
+    this.Amount = this.Amount.add(gain);
   }
 }
 
@@ -56,6 +57,7 @@ export enum SoapType {
 export interface ISoapData {
   Type: SoapType;
   Amount: Decimal;
+  // @params Lifetime produced amount of the soap
   ProducedAmount: Decimal;
   Quality: Decimal;
   Progress: Decimal;

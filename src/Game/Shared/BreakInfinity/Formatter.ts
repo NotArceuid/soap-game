@@ -1,3 +1,5 @@
+import { log } from "console";
+
 // Types for the number formatter
 export type Notation = "standard" | "scientific";
 
@@ -176,6 +178,10 @@ export class NumberFormatter {
 
   private formatStandard(value: number): string {
     const absValue = Math.abs(value);
+
+    if (absValue < 0.1) {
+      return "0";
+    }
 
     if (absValue < 1000) {
       return this.formatSmallNumber(value);

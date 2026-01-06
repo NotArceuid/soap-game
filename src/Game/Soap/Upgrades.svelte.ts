@@ -12,8 +12,7 @@ export const UpgradesData: SvelteMap<UpgradesKey, BaseUpgrade> = new SvelteMap<U
 
 export enum UpgradesKey {
   HoldButtonUpgrade, QualityUpgrade, SpeedUpgrade, RedSoapAutoSeller,
-  BulkUpgrade, EatRedSoapUpgrade, OrangeSoapUpgrade,
-  UnlockFoundry, CatPrestige
+  BulkUpgrade, EatRedSoapUpgrade, UnlockFoundry, CatPrestige
 }
 
 export abstract class BaseUpgrade implements IUpgradesInfo {
@@ -132,13 +131,7 @@ class EatRedSoapUpgrade extends BaseUpgrade {
   Requirements = [() => new ReactiveText(new Decimal(2_500_000).format()), () => Player.Money.gt(2500000)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
 }
-class OrangeSoapUpgrade extends BaseUpgrade {
-  name = "Unlock orange soap";
-  description = () => new ReactiveText("I hope they don't contain any harmful chemicals");
-  maxCount = 1;
-  Requirements = [() => new ReactiveText(new Decimal(1_000_000).format()), () => Player.Money.gt(1000000)] as [() => ReactiveText, () => boolean];
-  ShowCondition = () => true;
-}
+
 class UnlockFoundry extends BaseUpgrade {
   name = "Unlock Foundry";
   description = () => new ReactiveText("The last push before cat prestige >:)");
@@ -159,7 +152,6 @@ UpgradesData.set(UpgradesKey.SpeedUpgrade, new SpeedUpgrade());
 UpgradesData.set(UpgradesKey.QualityUpgrade, new QualityUpgrade());
 UpgradesData.set(UpgradesKey.RedSoapAutoSeller, new RedSoapAutoSellter());
 UpgradesData.set(UpgradesKey.BulkUpgrade, new BulkUpgrade());
-UpgradesData.set(UpgradesKey.OrangeSoapUpgrade, new OrangeSoapUpgrade());
 UpgradesData.set(UpgradesKey.EatRedSoapUpgrade, new EatRedSoapUpgrade());
 UpgradesData.set(UpgradesKey.UnlockFoundry, new UnlockFoundry());
 UpgradesData.set(UpgradesKey.CatPrestige, new CatUpgrade());
