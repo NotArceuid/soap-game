@@ -2,20 +2,25 @@ import { SvelteMap } from "svelte/reactivity";
 import { Player } from "../Player.svelte";
 import { Decimal } from "../Shared/BreakInfinity/Decimal.svelte";
 import { SaveSystem } from "../Saves";
+import { ReactiveText } from "../Shared/ReactiveText.svelte";
 
 export class Soap implements ISoapData {
   public Type: SoapType;
   public Amount: Decimal;
+  public EatAmount: Decimal;
   public ProducedAmount: Decimal;
   public MaxProgress: Decimal;
   public Unlocked: boolean;
+  public EatMessage: () => ReactiveText;
 
   constructor(data: ISoapData) {
     this.Type = $state(data.Type);
     this.Amount = $state(data.Amount);
+    this.EatAmount = $state(Decimal.ZERO);
     this.ProducedAmount = $state(data.ProducedAmount);
     this.MaxProgress = $state(data.MaxProgress);
     this.Unlocked = $state(data.Unlocked);
+    this.EatMessage = $state(data.EatMessage);
   }
 
   public CanSell(amount: Decimal | number): boolean {
@@ -24,9 +29,15 @@ export class Soap implements ISoapData {
     return this.Amount.gte(amount);
   }
 
-  public Sell(amount: Decimal | number) {
-    Player.Money = Player.Money.add(amount);
+  public Sell(amount: Decimal) {
+    let mult = (Soaps.get(SoapType.Red)?.EatAmount!).div(100);
+    Player.Money = Player.Money.add(amount.mul(mult));
     this.Amount = this.Amount.minus(amount);
+  }
+
+  public Eat(amount: Decimal) {
+    this.Amount = this.Amount.minus(amount);
+    this.EatAmount = this.EatAmount.add(amount);
   }
 
   public SoapMade(gain: Decimal) {
@@ -59,6 +70,7 @@ export interface ISoapData {
   ProducedAmount: Decimal;
   MaxProgress: Decimal;
   Unlocked: boolean;
+  EatMessage: () => ReactiveText;
 }
 
 export const SoapData: ISoapData[] = [
@@ -68,6 +80,7 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: true,
+    EatMessage: () => { return new ReactiveText(`Increases sell multiplier by ${Soaps.get(SoapType.Red)?.EatAmount!.div(100)}%`) }
   },
   {
     Type: SoapType.Orange,
@@ -75,6 +88,7 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(2500),
     Unlocked: false,
+    EatMessage: () => { return new ReactiveText(); }
   },
   {
     Type: SoapType.Yellow,
@@ -82,6 +96,7 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(100000),
     Unlocked: false,
+    EatMessage: () => { return new ReactiveText(); }
   },
   {
     Type: SoapType.Green,
@@ -89,6 +104,7 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(100_000_000),
     Unlocked: false,
+    EatMessage: () => { return new ReactiveText(); }
   },
   {
     Type: SoapType.Blue,
@@ -96,6 +112,7 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
+    EatMessage: () => { return new ReactiveText(); }
   },
   {
     Type: SoapType.Indigo,
@@ -103,6 +120,7 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
+    EatMessage: () => { return new ReactiveText(); }
   },
   {
     Type: SoapType.Violet,
@@ -110,6 +128,7 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
+    EatMessage: () => { return new ReactiveText(); }
   },
   {
     Type: SoapType.White,
@@ -117,6 +136,7 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
+    EatMessage: () => { return new ReactiveText(); }
   },
   {
     Type: SoapType.Black,
@@ -124,6 +144,7 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
+    EatMessage: () => { return new ReactiveText(); }
   },
   {
     Type: SoapType.Rainbow,
@@ -131,13 +152,15 @@ export const SoapData: ISoapData[] = [
     ProducedAmount: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
+    EatMessage: () => { return new ReactiveText(); }
   },
 ]
 
 export interface SoapSaveData {
   type: SoapType,
   unlocked: boolean,
-  amount: Decimal
+  amount: Decimal,
+  eatAmount: Decimal,
   producedAmount: Decimal,
 }
 
@@ -152,6 +175,7 @@ SaveSystem.SaveCallback("soap", () => {
     soap.push({
       type: k,
       producedAmount: v.ProducedAmount,
+      eatAmount: v.EatAmount,
       unlocked: v.Unlocked,
       amount: v.Amount,
     })

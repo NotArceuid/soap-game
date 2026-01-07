@@ -6,6 +6,7 @@
 	import SoapSellTab from "./SoapSellTab.svelte";
 	import { CollapsibleCard } from "svelte5-collapsible";
 	import { slide } from "svelte/transition";
+	import { SaveSystem } from "../../../Game/Saves.ts";
 
 	let { type }: { type: SoapType } = $props();
 	let producer = $derived(new SoapProducer(type));
@@ -45,10 +46,33 @@
 			: "hover:cursor-pointer",
 	);
 
+	let eatenUnlocked = $state(false);
+	$effect(() => {
+		if (producer.EatAmount.gt(0)) eatenUnlocked = true;
+	});
+
 	Update.add(() => {
 		if (producer.Unlocked) {
 			producer.AddProgress();
 		}
+	});
+
+	interface SoapProducerSave {
+		eatenUnlocked: boolean;
+	}
+
+	// svelte-ignore state_referenced_locally
+	let saveKey = `${type} producer`;
+	// svelte-ignore state_referenced_locally
+	SaveSystem.SaveCallback<SoapProducerSave>(saveKey, () => {
+		return {
+			eatenUnlocked: eatenUnlocked,
+		};
+	});
+
+	// svelte-ignore state_referenced_locally
+	SaveSystem.LoadCallback<SoapProducerSave>(saveKey, (data) => {
+		eatenUnlocked = data.eatenUnlocked;
 	});
 </script>
 
@@ -129,6 +153,17 @@
 						<h1 class="ml-auto">Quality: {producer.Quality.format()}</h1>
 						<h1 class="ml-auto">Speed: {producer.Speed.format()}</h1>
 					</div>
+
+					{#if eatenUnlocked || DevHacks.skipUnlock}
+						<div class="flex flex-row">
+							<h1>
+								Eaten: {producer.EatAmount}
+							</h1>
+							<h1 class="ml-auto">
+								{producer.EatMessage()}
+							</h1>
+						</div>
+					{/if}
 				{/snippet}
 			</CollapsibleCard>
 		{:else}

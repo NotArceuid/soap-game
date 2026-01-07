@@ -44,9 +44,9 @@ class QualityUpgrade extends BaseUpgrade {
   unlocked = true;
   maxCount = 600;
 
-  private qualityCost = new ExpPolynomial(new Decimal(500), new Decimal(1.17));
+  private qualityCost = new ExpPolynomial(new Decimal(360), new Decimal(1.17));
   get cost() {
-    return this.qualityCost.Integrate(this.count, this.count + this.buyAmount).minus(3).round();
+    return this.qualityCost.Integrate(this.count, this.count + this.buyAmount).round();
   }
   Requirements = [
     () => {
@@ -70,7 +70,7 @@ class SpeedUpgrade extends BaseUpgrade {
   unlocked = true;
   maxCount = 700;
 
-  private speedCost = new ExpPolynomial(new Decimal(500), new Decimal(1.15));
+  private speedCost = new ExpPolynomial(new Decimal(365), new Decimal(1.15));
   get cost() {
     return this.speedCost.Integrate(this.count, this.count + this.buyAmount).round();
   }

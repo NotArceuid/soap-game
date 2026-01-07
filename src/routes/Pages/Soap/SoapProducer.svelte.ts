@@ -65,6 +65,7 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
     let amt = Multipliers.QualityMultiplier.Get()
       .mul(1 + (this.QualityCount * 1.0) * Math.pow(2, Math.floor(this.QualityCount / 25))).div(3) // Multi from upgrade
       .mul(UpgradesData.get(UpgradesKey.QualityUpgrade)!.count + 1)
+      .mul(this.Decelerate * 1.25)
       .mul(this.Tier !== 0 ? this.Tier * 7.5 : 1) // Multi from tier
     return amt;
   }
@@ -103,6 +104,14 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
     return this.Soap.ProducedAmount;
   }
 
+  get EatAmount() {
+    return this.Soap.EatAmount;
+  }
+
+  get EatMessage() {
+    return this.Soap.EatMessage;
+  }
+
   AddProgress() {
     this.Progress = this.Progress.add(this.Speed);
 
@@ -139,6 +148,10 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
     let soap = this.Soap;
     if (!soap || soap.ProducedAmount.lt(this.RankUpReq))
       return;
+
+    this.QualityCount = 0;
+    this.SpeedCount = 0;
+    this.Decelerate = 0;
 
     this.Tier++;
   }
