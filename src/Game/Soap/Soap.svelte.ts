@@ -7,8 +7,6 @@ export class Soap implements ISoapData {
   public Type: SoapType;
   public Amount: Decimal;
   public ProducedAmount: Decimal;
-  public Quality: Decimal;
-  public Progress: Decimal;
   public MaxProgress: Decimal;
   public Unlocked: boolean;
 
@@ -16,8 +14,6 @@ export class Soap implements ISoapData {
     this.Type = $state(data.Type);
     this.Amount = $state(data.Amount);
     this.ProducedAmount = $state(data.ProducedAmount);
-    this.Quality = $state(data.Quality);
-    this.Progress = $state(data.Progress);
     this.MaxProgress = $state(data.MaxProgress);
     this.Unlocked = $state(data.Unlocked);
   }
@@ -29,7 +25,7 @@ export class Soap implements ISoapData {
   }
 
   public Sell(amount: Decimal | number) {
-    Player.Money = Player.Money.add(this.Quality.mul(amount));
+    Player.Money = Player.Money.add(amount);
     this.Amount = this.Amount.minus(amount);
   }
 
@@ -61,8 +57,6 @@ export interface ISoapData {
   Amount: Decimal;
   // @params Lifetime produced amount of the soap
   ProducedAmount: Decimal;
-  Quality: Decimal;
-  Progress: Decimal;
   MaxProgress: Decimal;
   Unlocked: boolean;
 }
@@ -72,8 +66,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.Red,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: true,
   },
@@ -81,8 +73,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.Orange,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(2500),
     Unlocked: false,
   },
@@ -90,8 +80,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.Yellow,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(100000),
     Unlocked: false,
   },
@@ -99,8 +87,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.Green,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(100_000_000),
     Unlocked: false,
   },
@@ -108,8 +94,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.Blue,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
   },
@@ -117,8 +101,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.Indigo,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
   },
@@ -126,8 +108,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.Violet,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
   },
@@ -135,8 +115,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.White,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
   },
@@ -144,8 +122,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.Black,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
   },
@@ -153,8 +129,6 @@ export const SoapData: ISoapData[] = [
     Type: SoapType.Rainbow,
     Amount: Decimal.ZERO,
     ProducedAmount: Decimal.ZERO,
-    Quality: Decimal.ONE,
-    Progress: Decimal.ZERO,
     MaxProgress: new Decimal(100),
     Unlocked: false,
   },
@@ -162,7 +136,6 @@ export const SoapData: ISoapData[] = [
 
 export interface SoapSaveData {
   type: SoapType,
-  progress: Decimal,
   unlocked: boolean,
   amount: Decimal
   producedAmount: Decimal,
@@ -178,7 +151,6 @@ SaveSystem.SaveCallback("soap", () => {
   Soaps.forEach((v, k) => {
     soap.push({
       type: k,
-      progress: v.Progress,
       producedAmount: v.ProducedAmount,
       unlocked: v.Unlocked,
       amount: v.Amount,

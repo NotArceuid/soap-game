@@ -12,16 +12,20 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
   public QualityCount: number;
   public Tier: number;
   public Unlocked: boolean;
+  public Decelerate: number;
   public SpeedFormula: ExpPolynomial;
   public QualityFormula: ExpPolynomial;
+  public Progress: Decimal;
 
   constructor(soapType: SoapType) {
     this.SoapType = $state(soapType);
     this.saveKey = $state(this.SoapType);
     this.Unlocked = $state(true);
     this.Tier = $state(0);
+    this.Decelerate = $state(0)
     this.SpeedCount = $state(0);
     this.QualityCount = $state(0);
+    this.Progress = $state(Decimal.ZERO);
 
     this.SpeedFormula = new ExpPolynomial(new Decimal(7.29), new Decimal(1.15));
     this.QualityFormula = new ExpPolynomial(new Decimal(4.5), new Decimal(1.17));
@@ -37,6 +41,7 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
       QualityCount: this.QualityCount,
       Unlocked: this.Unlocked,
       Tier: this.Tier,
+      Decelerate: this.Decelerate
     }
   }
 
@@ -45,6 +50,7 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
     this.QualityCount = data.QualityCount;
     this.Unlocked = data.Unlocked;
     this.Tier = data.Tier;
+    this.Decelerate = data.Decelerate;
   }
 
   GetSpeedCost(amount: number) {
@@ -67,6 +73,7 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
     let amt = Multipliers.SpeedMultiplier.Get()
       .mul(1 + (this.SpeedCount * 1.0) * Math.pow(2, Math.floor(this.SpeedCount / 25))) // Multi from upgrade 
       .mul(UpgradesData.get(UpgradesKey.SpeedUpgrade)!.count + 1)
+
       .div(this.Tier !== 0 ? this.Tier * 5 : 1) // Multi from tier 
 
     return amt
@@ -76,20 +83,33 @@ export class SoapProducer implements SoapProducerProps, ISaveable {
     return new Decimal(1_000_000).mul(new Decimal(10).pow(this.Tier));
   }
 
-  get Soap() {
+  get DecelerateReq() {
+    return new Decimal(1000).mul(new Decimal(10).pow(this.Decelerate));
+  }
+
+  get MaxProgress() {
+    return this.Soap.MaxProgress.mul(new Decimal(2).pow(this.Decelerate));
+  }
+
+  private get Soap() {
     return Soaps.get(this.SoapType)!
   }
 
-  AddProgress() {
-    let soap = this.Soap;
-    if (!soap) return;
+  get Amount() {
+    return this.Soap.Amount;
+  }
 
-    soap.Progress = soap.Progress.add(this.Speed);
+  get ProducedAmount() {
+    return this.Soap.ProducedAmount;
+  }
+
+  AddProgress() {
+    this.Progress = this.Progress.add(this.Speed);
 
     // Overexceeded logic here
-    if (soap.Progress.gte(soap.MaxProgress)) {
-      soap.Progress = Decimal.ZERO;
-      soap.SoapMade(this.Quality);
+    if (this.Progress.gte(this.MaxProgress)) {
+      this.Progress = Decimal.ZERO;
+      this.Soap?.SoapMade(this.Quality);
     }
   }
 
@@ -130,4 +150,5 @@ export interface SoapProducerProps {
   QualityCount: number;
   Tier: number;
   Unlocked: boolean;
+  Decelerate: number;
 }
