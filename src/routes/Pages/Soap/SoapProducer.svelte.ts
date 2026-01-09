@@ -64,7 +64,7 @@ export class SoapProducer {
     let amt = Multipliers.QualityMultiplier.Get()
       .mul(1 + this.QualityCount).div(3) // Multi from upgrade
       .mul(((upgCount) + 1) * Math.pow(2, Math.floor(upgCount) / 25))
-      .pow(this.DecelerateCount !== 0 ? 1 + this.DecelerateCount / 2.25 : 1) // mult from decel
+      .mul((this.DecelerateCount + 1) * 10000) // mult from decel
     return amt;
   }
 
@@ -83,7 +83,7 @@ export class SoapProducer {
   }
 
   get DecelerateReq() {
-    return new Decimal(1000).mul(new Decimal(10).pow(this.DecelerateCount));
+    return new Decimal(1000).mul(this.DecelerateCount + 1).mul(new Decimal(10).pow(this.DecelerateCount));
   }
 
   get MaxProgress() {
@@ -163,7 +163,8 @@ export class SoapProducer {
   Eat() {
     if (this.Soap.ProducedAmount.lt(this.EatReq))
       return;
-    this.EatAmount = this.EatAmount.add(this.Amount);
+
+    this.EatAmount = this.EatAmount.add(this.ProducedAmount);
 
     this.QualityCount = 0;
     this.SpeedCount = 0;

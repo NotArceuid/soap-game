@@ -29,11 +29,6 @@ export abstract class SoapBase implements ISoapData {
     this.Amount = this.Amount.minus(amount.minus(red ?? 0));
   }
 
-  public Eat(amount: Decimal) {
-    this.Amount = this.Amount.minus(amount);
-    this.EatAmount = this.EatAmount.add(amount);
-  }
-
   public SoapMade(gain: Decimal) {
     this.ProducedAmount = this.ProducedAmount.add(gain);
     this.Amount = this.Amount.add(gain);
@@ -42,7 +37,7 @@ export abstract class SoapBase implements ISoapData {
 
 class RedSoap extends SoapBase {
   EatMessage = () => {
-    return new ReactiveText(`Increases sell multiplier by ${Math.round(Decimal.log10(this.EatAmount.add(2)) + 1)}`)
+    return new ReactiveText(`Sell multiplier: ${Math.round(Decimal.log10(this.EatAmount.add(2)) + 1)}x`)
   }
 
   Type = $state(SoapType.Red);
@@ -152,6 +147,19 @@ export enum SoapType {
   White,
   Black,
   Rainbow
+}
+
+export const SoapNameMapping: Record<SoapType, string> = {
+  [SoapType.Red]: "Red Soap",
+  [SoapType.Orange]: "Orange Soap",
+  [SoapType.Yellow]: "Yellow Soap",
+  [SoapType.Green]: "Green Soap",
+  [SoapType.Blue]: "Blue Soap",
+  [SoapType.Indigo]: "Indigo Soap",
+  [SoapType.Violet]: "Violet Soap",
+  [SoapType.White]: "White Soap",
+  [SoapType.Black]: "Black Soap",
+  [SoapType.Rainbow]: "Rainbow Soap"
 }
 
 export interface ISoapData {

@@ -145,7 +145,7 @@ class RedSoapAutoSellerCostRed extends BaseUpgrade {
   description = () => new ReactiveText("Too greedy buying the previous upgrade? Reduces the cost deduction of red soap autoseller by 1% per level");
   maxCount = 99;
 
-  private costFormula = new ExpPolynomial(new Decimal(5000), new Decimal(1.10));
+  private costFormula = new ExpPolynomial(new Decimal(5000), new Decimal(1.5));
   get cost(): Decimal {
     return this.costFormula.Integrate(this.count, this.count + this.buyAmount).round();
   }
@@ -196,16 +196,18 @@ class EatRedSoapUpgrade extends BaseUpgrade {
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.gt(this.cost)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
 }
+
 class UnlockFoundry extends BaseUpgrade {
   name = "Unlock Foundry";
   description = () => new ReactiveText("The last push before cat prestige >:)");
   maxCount = 1;
   get cost() {
-    return new Decimal("1e+9");
+    return new Decimal("1e+39");
   }
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.gt(this.cost)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
 }
+
 class CatUpgrade extends BaseUpgrade {
   name = "Buy a.. cat?";
   description = () => new ReactiveText("Quite an expensive kitten");
@@ -260,8 +262,11 @@ SaveSystem.LoadCallback<UpgradeSaveData[]>(saveKey, (data) => {
 });
 
 export function ResetUpgrades() {
+
   UpgradesData.forEach((v, k) => {
-    v.count = 0;
+    if (k == UpgradesKey.BulkUpgrade || k == UpgradesKey.EatRedSoapUpgrade)
+      return;
+
     UpgradesData.set(k, v);
   })
 }

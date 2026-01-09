@@ -4,7 +4,7 @@
 	import { Player } from "../../Game/Player.svelte";
 	import { UpgradesData, UpgradesKey } from "../../Game/Soap/Upgrades.svelte";
 	import { DevHacks } from "../../Game/Game.svelte";
-	import { Soaps } from "../../Game/Soap/Soap.svelte";
+	import { SoapNameMapping, Soaps } from "../../Game/Soap/Soap.svelte";
 
 	let maxBulkAmt = $derived(
 		UpgradesData.get(UpgradesKey.BulkUpgrade)!.count + 1,
@@ -22,7 +22,7 @@
 			{#snippet body()}
 				{#each Soaps as soap}
 					{#if soap[1].Unlocked}
-						<h1>{soap[0]}: {soap[1].Amount.format()}</h1>
+						<h1>{SoapNameMapping[soap[0]]}: {soap[1].Amount.format()}</h1>
 					{/if}
 				{/each}
 			{/snippet}

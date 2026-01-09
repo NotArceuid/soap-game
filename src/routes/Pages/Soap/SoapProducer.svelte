@@ -83,7 +83,7 @@
 		if (counter >= autosellCap) {
 			let sellPercentage = UpgradesData.get(
 				UpgradesKey.RedSoapAutoSellBonus,
-			)!.count;
+			)!.count + 1
 			let sellAmount = soap.Amount.mul(sellPercentage).div(100);
 
 			let reductionPercentage = UpgradesData.get(
