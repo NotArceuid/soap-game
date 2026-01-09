@@ -11,7 +11,6 @@
 		UpgradesKey,
 	} from "../../../Game/Soap/Upgrades.svelte.ts";
 	import { Decimal } from "../../../Game/Shared/BreakInfinity/Decimal.svelte.ts";
-	import { log } from "console";
 
 	let { type }: { type: SoapType } = $props();
 
@@ -99,7 +98,7 @@
 
 	let eatenUnlocked = $state(false);
 	$effect(() => {
-		if (UpgradesData.get(UpgradesKey.EatRedSoapUpgrade)) eatenUnlocked = true;
+		if (UpgradesData.get(UpgradesKey.EatRedSoapUpgrade)?.count! > 0) eatenUnlocked = true;
 		if (producer.Speed.gt(30)) decelerateUnlocked = true;
 	});
 

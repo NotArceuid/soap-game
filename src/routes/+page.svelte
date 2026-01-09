@@ -37,7 +37,7 @@
 	);
 
   isLoading.subscribe((state) => {
-    if (state ) return;
+    if (state) return;
     PagesState.set(Pages.Settings, -1);
     PagesState.set(Pages.Soap, -1);
 
