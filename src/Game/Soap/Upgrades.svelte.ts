@@ -145,7 +145,7 @@ class RedSoapAutoSellerCostRed extends BaseUpgrade {
   description = () => new ReactiveText("Too greedy buying the previous upgrade? Reduces the cost deduction of red soap autoseller by 1% per level");
   maxCount = 99;
 
-  private costFormula = new Exponential(new Decimal(5000), new Decimal(1.3));
+  private costFormula = new ExpPolynomial(new Decimal(5000), new Decimal(1.10));
   get cost(): Decimal {
     return this.costFormula.Integrate(this.count, this.count + this.buyAmount).round();
   }

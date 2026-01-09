@@ -3,6 +3,7 @@ import { Player } from "../Player.svelte";
 import { Decimal } from "../Shared/BreakInfinity/Decimal.svelte";
 import { SaveSystem } from "../Saves";
 import { ReactiveText } from "../Shared/ReactiveText.svelte";
+import { log } from "console";
 
 export abstract class SoapBase implements ISoapData {
   abstract Type: SoapType;
@@ -141,16 +142,16 @@ export enum SoapPages {
 }
 
 export enum SoapType {
-  Red = "Red Soap",
-  Orange = "Orange Soap",
-  Yellow = "Yellow Soap",
-  Green = "Green Soap",
-  Blue = "Blue Soap",
-  Indigo = "Indigo Soap",
-  Violet = "Violet Soap",
-  White = "White Soap",
-  Black = "Black Soap",
-  Rainbow = "Rainbow Soap"
+  Red,
+  Orange,
+  Yellow,
+  Green,
+  Blue,
+  Indigo,
+  Violet,
+  White,
+  Black,
+  Rainbow
 }
 
 export interface ISoapData {
@@ -172,15 +173,16 @@ export interface SoapSaveData {
   producedamt: Decimal,
 }
 
-export const Soaps = new SvelteMap<SoapType, SoapBase>();
-Soaps.set(SoapType.Red, new RedSoap());
+export const Soaps = new SvelteMap<SoapType, SoapBase>([
+  [SoapType.Red, new RedSoap()]
+])
 
 SaveSystem.SaveCallback<SoapSaveData[]>("soap", () => {
   let soap: SoapSaveData[] = [];
   Soaps.forEach((v, k) => {
     soap.push({
       type: k,
-      producedamt: v.ProducedAmount,
+      producedamt: new Decimal(v.ProducedAmount),
       eatamt: v.EatAmount,
       unlocked: v.Unlocked,
       amount: v.Amount,

@@ -1,4 +1,4 @@
-import { Soaps, type SoapType } from "../../../Game/Soap/Soap.svelte";
+import { Soaps, SoapType } from "../../../Game/Soap/Soap.svelte";
 import { Player } from "../../../Game/Player.svelte";
 import { Decimal } from "../../../Game/Shared/BreakInfinity/Decimal.svelte";
 import { ExpPolynomial } from "../../../Game/Shared/Math";
@@ -24,11 +24,10 @@ export class SoapProducer {
     this.SpeedCount = $state(0);
     this.QualityCount = $state(0);
     this.Progress = $state(Decimal.ZERO);
-
     this.SpeedFormula = new ExpPolynomial(new Decimal(7.29), new Decimal(1.15));
     this.QualityFormula = new ExpPolynomial(new Decimal(4.5), new Decimal(1.17));
 
-    let saveKey = this.SoapType.toLowerCase();
+    let saveKey = this.SoapType.toString();
     SaveSystem.SaveCallback<SoapProducerSave>(saveKey, () => {
       return {
         speedcnt: this.SpeedCount,
@@ -36,14 +35,19 @@ export class SoapProducer {
         unlocked: this.Unlocked,
         decelerate: this.DecelerateCount,
         eatamt: this.EatAmount,
+        producedamt: this.ProducedAmount,
+        type: this.SoapType,
       }
     });
     SaveSystem.LoadCallback<SoapProducerSave>(saveKey, (data) => {
+      this.SoapType = data.type;
+
       this.SpeedCount = data.speedcnt;
       this.QualityCount = data.qualitycnt;
       this.Unlocked = data.unlocked;
       this.DecelerateCount = data.decelerate;
       this.EatAmount = new Decimal(data.eatamt);
+      this.ProducedAmount = new Decimal(data.producedamt);
     });
   }
 
@@ -94,8 +98,16 @@ export class SoapProducer {
     return this.Soap.Amount;
   }
 
+  set Amount(value) {
+    this.Soap.Amount = value
+  }
+
   get ProducedAmount() {
     return this.Soap.ProducedAmount;
+  }
+
+  set ProducedAmount(value) {
+    this.Soap.ProducedAmount = value;
   }
 
   get EatAmount() {
@@ -149,14 +161,17 @@ export class SoapProducer {
   }
 
   Eat() {
-    let soap = this.Soap;
-    if (!soap || soap.ProducedAmount.lt(this.EatReq))
+    if (this.Soap.ProducedAmount.lt(this.EatReq))
       return;
     this.EatAmount = this.EatAmount.add(this.Amount);
 
     this.QualityCount = 0;
     this.SpeedCount = 0;
     this.DecelerateCount = 0;
+
+    this.Amount = Decimal.ZERO;
+    Player.Money = Decimal.ZERO;
+    this.ProducedAmount = Decimal.ZERO;
 
     ResetUpgrades();
   }
@@ -168,4 +183,6 @@ export interface SoapProducerSave {
   unlocked: boolean;
   decelerate: number;
   eatamt: Decimal;
+  producedamt: Decimal;
+  type: SoapType;
 }

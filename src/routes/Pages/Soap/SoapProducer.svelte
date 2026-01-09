@@ -11,9 +11,9 @@
 		UpgradesKey,
 	} from "../../../Game/Soap/Upgrades.svelte.ts";
 	import { Decimal } from "../../../Game/Shared/BreakInfinity/Decimal.svelte.ts";
+	import { log } from "console";
 
 	let { type }: { type: SoapType } = $props();
-
 	let producer = $derived(new SoapProducer(type));
 	let soap = $derived(Soaps.get(type)!);
 	let width = $derived(producer.Progress.div(producer.MaxProgress).mul(100));
@@ -42,10 +42,10 @@
 			: "hover:cursor-pointer",
 	);
 	let accelerateIndicator = $derived(
-		producer.DecelerateCount > 1 ? "bg-gray-100" : "",
+		producer.DecelerateCount >= 1 ? "" : "bg-gray-100",
 	);
 	let canDeccelerate = $derived(
-		producer.Speed.gt(producer.DecelerateReq) ? "" : "bg-gray-100",
+		producer.Speed.gte(producer.DecelerateReq) ? "" : "bg-gray-100",
 	);
 	let canEat = $derived(
 		producer.ProducedAmount.lt(producer.EatReq) ? "bg-gray-100" : "",
@@ -178,8 +178,8 @@
 							>
 						{/if}
 						{#if eatenUnlocked || DevHacks.skipUnlock}
-							<button onclick={producer.Eat} class=" ml-0 mt-1 {canEat}"
-								>Eat Soap <div>
+							<button onclick={() => producer.Eat()} class=" ml-0 mt-1 {canEat}"
+								>Eat Soap <div> 
 									({soap?.ProducedAmount.format()}/ {producer.EatReq.format()})
 								</div></button
 							>
@@ -226,7 +226,7 @@
 					{#if eatenUnlocked || DevHacks.skipUnlock}
 						<div class="flex flex-row">
 							<h1>
-								Eaten: {producer.EatAmount}
+								Eaten: {producer.EatAmount.format()}
 							</h1>
 							<h1 class="ml-auto">
 								{producer.EatMessage()}
