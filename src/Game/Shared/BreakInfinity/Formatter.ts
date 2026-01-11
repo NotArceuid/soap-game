@@ -212,3 +212,32 @@ export const formatter = new NumberFormatter({
   notation: "standard",
   decimals: 2,
 });
+
+export function formatTime(seconds: number): string {
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+
+  const units = [
+    { abbr: "yr", sec: 31536000 },
+    { abbr: "w", sec: 604800 },
+    { abbr: "d", sec: 86400 },
+    { abbr: "hr", sec: 3600 },
+    { abbr: "m", sec: 60 }
+  ];
+
+  let remaining = seconds;
+
+  for (const unit of units) {
+    if (remaining >= unit.sec) {
+      const count = Math.floor(remaining / unit.sec);
+      const secs = remaining % 60;
+      return `${count}${unit.abbr} ${secs.toString().padStart(2, '0')}s`;
+    }
+  }
+
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}m ${secs.toString().padStart(2, '0')}s`;
+}
+

@@ -24,6 +24,7 @@ export enum UpgradesKey {
   RedQualityAutobuy,
   RedSpeedAutobuy,
   UnlockFoundry,
+  UnlockOrangeSoap,
   CatPrestige
 }
 
@@ -238,7 +239,7 @@ class RedQualityAutobuy extends BaseUpgrade {
 
   ShowCondition: () => boolean = () => SoapProducers[SoapType.Red].DecelerateCount >= 2;
   get cost() {
-    return new Decimal("1e+18")
+    return new Decimal("2.5e+19")
   }
 
 }
@@ -248,12 +249,12 @@ class RedSpeedAutobuy extends BaseUpgrade {
   description: () => ReactiveText = () => new ReactiveText("Pretty sure getting to deccel 3 is quite painful eh? Autobuys red soap speed upgrade. ")
   maxCount: number = 1;
   Requirements: [() => ReactiveText, () => boolean] = [
-    () => new ReactiveText(this.cost.format(), "+ Red Soap Deccelerate 4"), () => Player.Money.gte(this.cost) && SoapProducers[SoapType.Red].DecelerateCount > 3
+    () => new ReactiveText(this.cost.format(), " + Red Soap Deccelerate 4"), () => Player.Money.gte(this.cost) && SoapProducers[SoapType.Red].DecelerateCount > 3
   ]
 
-  ShowCondition: () => boolean = () => SoapProducers[SoapType.Red].DecelerateCount >= 3;
+  ShowCondition: () => boolean = () => SoapProducers[SoapType.Red].DecelerateCount >= 2;
   get cost() {
-    return new Decimal("1e+17")
+    return new Decimal("2.5e+22")
   }
 
 }
@@ -263,7 +264,18 @@ class UnlockFoundry extends BaseUpgrade {
   description = () => new ReactiveText("The last push before cat prestige >:)");
   maxCount = 1;
   get cost() {
-    return new Decimal("1e+39");
+    return new Decimal("1e+23");
+  }
+  Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.gt(this.cost)] as [() => ReactiveText, () => boolean];
+  ShowCondition = () => true;
+}
+
+class UnlockOrangeSoap extends BaseUpgrade {
+  name = "Unlock orange soap";
+  description = () => new ReactiveText("Oranges are orange");
+  maxCount = 1;
+  get cost() {
+    return new Decimal("1e+26");
   }
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.gt(this.cost)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
@@ -291,6 +303,7 @@ export const UpgradesData: Record<UpgradesKey, BaseUpgrade> = {
   [UpgradesKey.RedQualityAutobuy]: new RedQualityAutobuy(),
   [UpgradesKey.RedSpeedAutobuy]: new RedSpeedAutobuy(),
   [UpgradesKey.UnlockFoundry]: new UnlockFoundry(),
+  [UpgradesKey.UnlockOrangeSoap]: new UnlockOrangeSoap(),
   [UpgradesKey.CatPrestige]: new CatUpgrade(),
 }; const saveKey = "upgrades";
 

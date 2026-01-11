@@ -2,11 +2,9 @@
 	import { log } from "console";
 	import { Player } from "../../Game/Player.svelte.ts";
 	import type { IUpgradesInfo } from "./UpgradesInfo.svelte.ts";
+	import ActionButton from "./ActionButton.svelte";
 
 	let { upgrade }: { upgrade?: IUpgradesInfo } = $props();
-	let canBuy = $derived(
-		upgrade?.Requirements?.every((t) => t()) ? "" : "bg-gray-100",
-	);
 
 	let amount = $derived.by<number>(() => {
 		if (!upgrade || !upgrade.getMax) return 1;
@@ -37,13 +35,16 @@
 			({upgrade.count}/{upgrade.maxCount})
 		</h1>
 		<h1 class="mb-2">{upgrade.description()}</h1>
-    {#if upgrade.effect}
-  		<h1 class="mb-2">{upgrade.effect()}</h1>
-    {/if}
-		<button class=" ml-auto mr-auto {canBuy}" onclick={buyUpgrades}>
-			<div>
+		{#if upgrade.effect}
+			<h1 class="mb-2">{upgrade.effect()}</h1>
+		{/if}
+		<ActionButton
+			disabled={!upgrade.Requirements.every((t) => t())}
+			onclick={buyUpgrades}
+		>
+			{#snippet content()}
 				<div>Cost({amount}): {upgrade.Requirements[0]()}</div>
-			</div>
-		</button>
+			{/snippet}
+		</ActionButton>
 	{/if}
 </div>
