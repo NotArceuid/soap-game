@@ -1,16 +1,18 @@
-import { SvelteMap } from "svelte/reactivity";
 import { InvokeableEvent } from "../Shared/Events";
 import type { Decimal } from "../Shared/BreakInfinity/Decimal.svelte";
 
-export const UnlockAchievement: InvokeableEvent<AchievementKey> = new InvokeableEvent<AchievementKey>();
-export function InvokeAchievement(key: AchievementKey) { UnlockAchievement.invoke(key); }
+export const UnlockAchievementEvent: InvokeableEvent<AchievementKey> = new InvokeableEvent<AchievementKey>();
+export function UnlockAchievement(key: AchievementKey) {
+  AchievementsData[key].unlocked = true;
+  UnlockAchievementEvent.invoke(key);
+}
 
 export enum AchievementKey {
   Soapy, Quality, Speedy, Businessman,
   Automation, OCD, Millionaire, Deccelerate,
   HighSpeed, Accelerate, Deccelerate2, EatSoap,
   Deccelerate3, Deccelerate4, Foundry, Charge,
-  OrangeSoap, OrangeDeccel1, Cat
+  Ticket, OrangeSoap, OrangeDeccel1, Cat
 }
 
 export const AchievementsData: Record<AchievementKey, IAchievement> = $state({
@@ -95,13 +97,18 @@ export const AchievementsData: Record<AchievementKey, IAchievement> = $state({
     description: "Totally not stolen from a certain grass game",
     check: (...props) => props[0].gt(0)
   },
+  [AchievementKey.Ticket]: {
+    name: "Awesome time sink",
+    description: "Make your first ticket",
+    check: (...props) => props[0].gt(0)
+  },
   [AchievementKey.OrangeSoap]: {
     name: "Orange ca- i mean soap",
     description: "Unlock orange soap Meowmeowowemowe",
     check: (...props) => props[0].gt(0)
   },
   [AchievementKey.OrangeDeccel1]: {
-    name: "Slowwwwwwwwwwwwwwwwww",
+    name: "One orange deccel",
     description: "Deccelerate orange soap once ",
     check: (...props) => props[0].gt(0)
   },

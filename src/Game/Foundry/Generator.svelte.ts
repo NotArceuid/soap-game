@@ -1,42 +1,90 @@
-import { SvelteMap } from "svelte/reactivity";
 import { SaveSystem } from "../Saves";
 import { InvokeableEvent } from "../Shared/Events";
 import { ReactiveText } from "../Shared/ReactiveText.svelte";
 import type { IUpgradesInfo } from "../../routes/Components/UpgradesInfo.svelte";
+import { Exponential, ExpPolynomial } from "../Shared/Math";
+import { Decimal } from "../Shared/BreakInfinity/Decimal.svelte";
+import { Player } from "../Player.svelte";
+import { Soaps } from "../Soap/Soap.svelte";
 
 export const UnlockGenerators: InvokeableEvent<GeneratorsKey> = new InvokeableEvent<GeneratorsKey>();
-export const GeneratorsData: SvelteMap<GeneratorsKey, BaseGenerator> = new SvelteMap<GeneratorsKey, BaseGenerator>();
 
 export enum GeneratorsKey {
-  ChargeSpeed, ChargeCapacity
+  ChargeSpeed, ChargePower, TicketConversion
 }
 
 export abstract class BaseGenerator implements IUpgradesInfo {
-  getMax: () => number = () => { return 1 }
+  abstract buy: () => void;
   abstract name: string;
   abstract description: () => ReactiveText;
   abstract maxCount: number;
   abstract Requirements: [() => ReactiveText, () => boolean];
   abstract ShowCondition: () => boolean;
   count: number = $state(0)
-
+  effect?: (() => ReactiveText) | undefined;
+  getMax: () => number = () => { return 1 }
   unlocked: boolean = $state(false);
   buyAmount: number = $state(0);
 }
 
-
-const saveKey = "generator";
-SaveSystem.SaveCallback(saveKey, () => SaveData());
-
-interface GeneratorSaveData {
-  generatorsKey: GeneratorsKey;
-  count: number;
-  unlocked: boolean;
+class ChargeSpeed extends BaseGenerator {
+  private formula = new ExpPolynomial(new Decimal("1e+15"), new Decimal(2.5));
+  private get cost() {
+    return this.formula.Integrate(this.count, this.count + this.buyAmount);
+  }
+  buy: () => void = () => {
+    Soaps[0].Amount = Soaps[0].Amount.minus(this.cost);
+    this.count += this.buyAmount;
+  };
+  name: string = "Charge Speed"
+  description: () => ReactiveText = () => new ReactiveText("Increases Charge Gain by 100% per level");
+  effect: (() => ReactiveText) = () => new ReactiveText(this.count * 100);
+  maxCount: number = 999;
+  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText(this.cost.format()), () => Soaps[0].Amount.gt(this.cost)];
+  ShowCondition: () => boolean = () => true;
 }
 
-function SaveData() {
-  let upgrades: GeneratorSaveData[] = [];
-  GeneratorsData.forEach((v, k) => {
+class ChargePower extends BaseGenerator {
+  private formula = new ExpPolynomial(new Decimal(10), new Decimal(2));
+  private get cost() {
+    return this.formula.Integrate(this.count, this.count + this.buyAmount);
+  }
+  buy: () => void = () => {
+    Soaps[1].Amount = Soaps[1].Amount.minus(this.cost);
+    this.count += this.buyAmount;
+  }
+  name: string = "Charge Power"
+  description: () => ReactiveText = () => new ReactiveText("Increases the power of charge milestones by 100% per level")
+  maxCount: number = 999;
+  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText(this.cost), () => Soaps[1].Amount.gt(this.cost)];
+  ShowCondition: () => boolean = () => true;
+}
+
+class TicketConversion extends BaseGenerator {
+  private formula = new Exponential(new Decimal(2), new Decimal(2));
+  private get cost() {
+    return this.formula.Integrate(this.count, this.count + this.buyAmount);
+  }
+  buy: () => void = () => {
+    Player.Money.minus(this.cost);
+  }
+  name: string = "Ticket Conversion"
+  description: () => ReactiveText = () => new ReactiveText("Converts your excess charge into tickets..")
+  maxCount: number = -1;
+  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText(this.cost), () => Player.Money.gt(this.cost)];
+  ShowCondition: () => boolean = () => true;
+}
+
+export const GeneratorsData: Record<GeneratorsKey, BaseGenerator> = $state({
+  [GeneratorsKey.ChargeSpeed]: new ChargeSpeed(),
+  [GeneratorsKey.ChargePower]: new ChargePower(),
+  [GeneratorsKey.TicketConversion]: new TicketConversion(),
+})
+
+const saveKey = "generator";
+SaveSystem.SaveCallback<GeneratorSaveData[]>(saveKey, () => {
+  const upgrades: GeneratorSaveData[] = [];
+  Object.values(GeneratorsData).forEach((v, k) => {
     upgrades.push({
       generatorsKey: k,
       count: v.count,
@@ -44,37 +92,19 @@ function SaveData() {
     })
   })
 
-  return {
-    Generators: upgrades
-  }
+  return upgrades;
+});
+
+interface GeneratorSaveData {
+  generatorsKey: GeneratorsKey;
+  count: number;
+  unlocked: boolean;
 }
 
-SaveSystem.LoadCallback(saveKey, (data) => LoadData(data as GeneratorSaveData[]));
-function LoadData(data: GeneratorSaveData[]) {
-  Array.prototype.forEach.call(data, (ele) => {
-    let currGenerator = GeneratorsData.get(ele.generatorsKey)!;
-    currGenerator.count = ele.count;
-    currGenerator.unlocked = ele.unlocked;
-
-    GeneratorsData.set(ele.generatorsKey, currGenerator);
-  })
-}
-
-class ChargeSpeed extends BaseGenerator {
-  name: string = "Charge Speed"
-  description: () => ReactiveText = () => new ReactiveText("Increases the charge gain per tick")
-  maxCount: number = 999;
-  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText("Cost: 1000"), () => true];
-  ShowCondition: () => boolean = () => true;
-}
-
-class ChargeCapacity extends BaseGenerator {
-  name: string = "Charge Capacity"
-  description: () => ReactiveText = () => new ReactiveText("Increases the maximum charge that you can hold at a time.")
-  maxCount: number = 999;
-  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText("Cost: 1000"), () => true];
-  ShowCondition: () => boolean = () => true;
-}
-
-GeneratorsData.set(GeneratorsKey.ChargeSpeed, new ChargeSpeed());
-GeneratorsData.set(GeneratorsKey.ChargeCapacity, new ChargeCapacity());
+SaveSystem.LoadCallback<GeneratorSaveData[]>(saveKey, (data) => {
+  data.forEach((entry, index) => {
+    const key = Object.keys(GeneratorsData)[index] as unknown as keyof typeof GeneratorsData;
+    GeneratorsData[key].count = entry.count;
+    GeneratorsData[key].unlocked = entry.unlocked;
+  });
+})

@@ -1,13 +1,20 @@
 <script lang="ts">
-	import { UpgradesData } from "../../../Game/Soap/Upgrades.svelte";
-	import type { IUpgradesInfo } from "../../Components/UpgradesInfo.svelte.ts";
+	import {
+		BaseUpgrade,
+		UpgradesData,
+	} from "../../../Game/Soap/Upgrades.svelte";
 	import UpgradesInfo from "../../Components/UpgradesInfo.svelte";
 	import { DevHacks } from "../../../Game/Game.svelte.ts";
 	import ActionButton from "../../Components/ActionButton.svelte";
 	import { log } from "console";
 
-	let currUpgrade = $state<IUpgradesInfo>();
+	let currUpgrade = $state<BaseUpgrade>();
 	let showMaxxedUpgrades = $state(false);
+	let data = $derived(Object.entries(UpgradesData));
+
+	$effect(() => {
+		log(currUpgrade);
+	});
 </script>
 
 <div class="absolute pr-4 w-full flex flex-col h-9/12">
@@ -16,15 +23,16 @@
 		<input type="checkbox" bind:checked={showMaxxedUpgrades} />
 	</div>
 	<div class="flex flex-wrap">
-		{#each Object.entries(UpgradesData) as upgrade}
+		{#each data as upgrade}
 			{#if (upgrade[1].ShowCondition() && (showMaxxedUpgrades || upgrade[1].count < upgrade[1].maxCount)) || DevHacks.skipUnlock}
 				<ActionButton
 					buttonClass="w-64 h-12 shrink-0 m-2"
-					disabled={!upgrade[1].Requirements[1]()}
+					disabled={upgrade[1].Requirements[1]()}
 					onclick={() => (currUpgrade = upgrade[1])}
 				>
 					{#snippet content()}
 						<span>
+							{log(upgrade[1].Requirements[1]() || currUpgrade == upgrade[1])}
 							{upgrade[1].name} ({upgrade[1].count}/{upgrade[1].maxCount})
 						</span>
 					{/snippet}

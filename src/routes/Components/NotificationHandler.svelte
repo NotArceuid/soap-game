@@ -1,14 +1,14 @@
 <script lang="ts">
 	import {
 		AchievementsData,
-		UnlockAchievement,
+		UnlockAchievementEvent,
 		type IAchievement,
 	} from "../../Game/Achievements/Achievements.svelte.ts";
 
 	let data = $state<IAchievement>();
 	let visible = $state(false);
-	UnlockAchievement.add((key) => {
-		data = AchievementsData.get(key);
+	UnlockAchievementEvent.add((key) => {
+		data = AchievementsData[key];
 		visible = true;
 		setTimeout(() => {
 			visible = !visible;

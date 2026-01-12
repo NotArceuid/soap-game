@@ -294,7 +294,7 @@
 		</div>
 		<CollapsibleCard transition={{ transition: slide }} isOpen={true}>
 			{#snippet header()}
-				<div class="h-2 flex flex-row hover:cursor-pointer"></div>
+				<div class="h-2 flex flex-row"></div>
 			{/snippet}
 
 			{#snippet body()}

@@ -292,7 +292,7 @@ class CatUpgrade extends BaseUpgrade {
   ShowCondition = () => true;
 }
 
-export const UpgradesData: Record<UpgradesKey, BaseUpgrade> = {
+export const UpgradesData: Record<UpgradesKey, BaseUpgrade> = $state({
   [UpgradesKey.RedSoapAutoSeller]: new RedSoapAutoSeller(),
   [UpgradesKey.QualityUpgrade]: new QualityUpgrade(),
   [UpgradesKey.SpeedUpgrade]: new SpeedUpgrade(),
@@ -305,7 +305,9 @@ export const UpgradesData: Record<UpgradesKey, BaseUpgrade> = {
   [UpgradesKey.UnlockFoundry]: new UnlockFoundry(),
   [UpgradesKey.UnlockOrangeSoap]: new UnlockOrangeSoap(),
   [UpgradesKey.CatPrestige]: new CatUpgrade(),
-}; const saveKey = "upgrades";
+});
+
+const saveKey = "upgrades";
 
 SaveSystem.SaveCallback<UpgradeSaveData[]>(saveKey, () => {
   const upgrades: UpgradeSaveData[] = [];
