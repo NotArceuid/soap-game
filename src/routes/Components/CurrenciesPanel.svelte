@@ -18,6 +18,9 @@
 	<h1 class="text-center border-b py-2 font-bold">Currencies</h1>
 	<div class="m-3 w-full">
 		<h1>Money: {Player.Money.format()}</h1>
+		{#if Player.Charge.gt(0)}
+			<h1>Charge: {Player.Charge.format()}</h1>
+		{/if}
 		<CollapsibleCard transition={{ transition: slide }} isOpen={true}>
 			{#snippet header()}
 				<div class="underline w-full">Soaps</div>

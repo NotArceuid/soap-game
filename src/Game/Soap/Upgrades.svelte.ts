@@ -1,4 +1,3 @@
-import { SvelteMap } from "svelte/reactivity";
 import { InvokeableEvent } from "../Shared/Events";
 import { ReactiveText } from "../Shared/ReactiveText.svelte.ts";
 import { Decimal } from "../Shared/BreakInfinity/Decimal.svelte.ts";
@@ -7,9 +6,8 @@ import { Player } from "../Player.svelte.ts";
 import { SaveSystem } from "../Saves.ts";
 import type { IUpgradesInfo } from "../../routes/Components/UpgradesInfo.svelte.ts";
 import { SoapType } from "./Soap.svelte.ts";
-import { SoapProducer, SoapProducers } from "../../routes/Pages/Soap/SoapProducer.svelte.ts";
+import { SoapProducers } from "../../routes/Pages/Soap/SoapProducer.svelte.ts";
 import { log } from "console";
-import type { TypeParameter } from "typescript";
 
 export const UpgradeBought: InvokeableEvent<UpgradesKey> = new InvokeableEvent<UpgradesKey>();
 
@@ -24,6 +22,7 @@ export enum UpgradesKey {
   RedQualityAutobuy,
   RedSpeedAutobuy,
   UnlockFoundry,
+  ChargeSpeedUpgrade,
   UnlockOrangeSoap,
   CatPrestige
 }
@@ -292,6 +291,38 @@ class CatUpgrade extends BaseUpgrade {
   ShowCondition = () => true;
 }
 
+class ChargeSpeedUpgrade extends BaseUpgrade {
+  name = "Charge Speed";
+  description = () => new ReactiveText("Improves Charge Gain by 100%");
+  unlocked = true;
+  maxCount = 600;
+
+  private formula = new ExpPolynomial(new Decimal(1e24), new Decimal(1.20));
+  get cost() {
+    return this.formula.Integrate(this.count, this.count + this.buyAmount).round();
+  }
+  Requirements = [
+    () => {
+      return new ReactiveText(this.cost.format())
+    },
+    () => {
+      return Player.Money.gte(this.cost) && this.count < this.maxCount
+    }
+  ] as [() => ReactiveText, () => boolean];
+
+  effect = () => {
+    return new ReactiveText(`Current Multiplier: ${new Decimal(((this.count) + 1) * Math.pow(2, Math.floor(this.count / 25))).mul(100).format()}%`);
+  }
+
+  getMax = () => {
+    let amt = this.formula.BuyMax(Player.Money, this.count);
+    return amt == -1 ? 1 : amt;
+  }
+
+  ShowCondition = () => true;
+
+}
+
 export const UpgradesData: Record<UpgradesKey, BaseUpgrade> = $state({
   [UpgradesKey.RedSoapAutoSeller]: new RedSoapAutoSeller(),
   [UpgradesKey.QualityUpgrade]: new QualityUpgrade(),
@@ -303,6 +334,7 @@ export const UpgradesData: Record<UpgradesKey, BaseUpgrade> = $state({
   [UpgradesKey.RedQualityAutobuy]: new RedQualityAutobuy(),
   [UpgradesKey.RedSpeedAutobuy]: new RedSpeedAutobuy(),
   [UpgradesKey.UnlockFoundry]: new UnlockFoundry(),
+  [UpgradesKey.ChargeSpeedUpgrade]: new ChargeSpeedUpgrade(),
   [UpgradesKey.UnlockOrangeSoap]: new UnlockOrangeSoap(),
   [UpgradesKey.CatPrestige]: new CatUpgrade(),
 });

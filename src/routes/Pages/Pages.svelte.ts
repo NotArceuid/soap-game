@@ -2,19 +2,18 @@
 
 import { SvelteMap } from "svelte/reactivity";
 import { InvokeableEvent } from "../../Game/Shared/Events";
-import { Pages } from "../page.svelte.ts";
 
-const PageChanged: InvokeableEvent<Pages> = new InvokeableEvent();
-export const PagesState: Map<Pages, number> = new Map<Pages, number>();
+const PageChanged: InvokeableEvent<PagesEnum> = new InvokeableEvent();
+export const PagesState: Map<PagesEnum, number> = new Map<PagesEnum, number>();
 
 export class PageHandler<T extends number> {
-  public Parent: Pages = Pages.Soap;
+  public Parent: PagesEnum = PagesEnum.Soap;
   public PagesMap = new SvelteMap<T, HTMLElement>();
   private currentPage: T | null = null;
   private isVisible: boolean = false;
   private root: boolean = false;
 
-  constructor(root = false, parent?: Pages) {
+  constructor(root = false, parent?: PagesEnum) {
     this.root = root;
     if (parent) {
       this.Parent = parent;
@@ -74,3 +73,12 @@ export class PageHandler<T extends number> {
 
   }
 }
+export enum PagesEnum {
+  Soap,
+  Settings,
+  Cat,
+  Achievements,
+  HowTfDoIPlay,
+}
+
+export const MainPageHandler = new PageHandler<PagesEnum>(true);

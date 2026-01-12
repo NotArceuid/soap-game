@@ -1,21 +1,23 @@
 <script lang="ts">
-	import { MainPageHandler, Pages } from "../page.svelte";
+	import { MainPageHandler, PagesEnum } from "../Pages/Pages.svelte";
 </script>
 
 <div id="navbar">
-	<button onclick={() => MainPageHandler.ChangePage(Pages.Soap)}>Soap</button>
-	<button onclick={() => MainPageHandler.ChangePage(Pages.Cat)}
+	<button onclick={() => MainPageHandler.ChangePage(PagesEnum.Soap)}
+		>Soap</button
+	>
+	<button onclick={() => MainPageHandler.ChangePage(PagesEnum.Cat)}
 		>Cat ₍^. .^₎⟆</button
 	>
-	<button onclick={() => MainPageHandler.ChangePage(Pages.Achievements)}
+	<button onclick={() => MainPageHandler.ChangePage(PagesEnum.Achievements)}
 		>Achievements</button
 	>
-	<button onclick={() => MainPageHandler.ChangePage(Pages.Settings)}
+	<button onclick={() => MainPageHandler.ChangePage(PagesEnum.Settings)}
 		>Settings</button
 	>
 	<button
 		class="justify-end"
-		onclick={() => MainPageHandler.ChangePage(Pages.HowTfDoIPlay)}
+		onclick={() => MainPageHandler.ChangePage(PagesEnum.HowTfDoIPlay)}
 		>How Do I Play</button
 	>
 </div>

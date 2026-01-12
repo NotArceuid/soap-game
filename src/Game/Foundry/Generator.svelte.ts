@@ -1,11 +1,12 @@
 import { SaveSystem } from "../Saves";
 import { InvokeableEvent } from "../Shared/Events";
 import { ReactiveText } from "../Shared/ReactiveText.svelte";
-import type { IUpgradesInfo } from "../../routes/Components/UpgradesInfo.svelte";
+import type { IUpgradesInfo } from "../../routes/Components/UpgradesInfo.svelte.ts";
 import { Exponential, ExpPolynomial } from "../Shared/Math";
 import { Decimal } from "../Shared/BreakInfinity/Decimal.svelte";
 import { Player } from "../Player.svelte";
 import { Soaps } from "../Soap/Soap.svelte";
+import { number } from "svelte-i18n";
 
 export const UnlockGenerators: InvokeableEvent<GeneratorsKey> = new InvokeableEvent<GeneratorsKey>();
 
@@ -24,7 +25,7 @@ export abstract class BaseGenerator implements IUpgradesInfo {
   effect?: (() => ReactiveText) | undefined;
   getMax: () => number = () => { return 1 }
   unlocked: boolean = $state(false);
-  buyAmount: number = $state(0);
+  buyAmount: number = $state(1);
 }
 
 class ChargeSpeed extends BaseGenerator {
@@ -38,9 +39,9 @@ class ChargeSpeed extends BaseGenerator {
   };
   name: string = "Charge Speed"
   description: () => ReactiveText = () => new ReactiveText("Increases Charge Gain by 100% per level");
-  effect: (() => ReactiveText) = () => new ReactiveText(this.count * 100);
+  effect: (() => ReactiveText) = () => new ReactiveText(`${this.count * 100}% Gain`);
   maxCount: number = 999;
-  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText(this.cost.format()), () => Soaps[0].Amount.gt(this.cost)];
+  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText(`${this.cost.format()} Red Soap`), () => Soaps[0].Amount.gt(this.cost)];
   ShowCondition: () => boolean = () => true;
 }
 
@@ -55,23 +56,24 @@ class ChargePower extends BaseGenerator {
   }
   name: string = "Charge Power"
   description: () => ReactiveText = () => new ReactiveText("Increases the power of charge milestones by 100% per level")
+  effect: (() => ReactiveText) = () => new ReactiveText(`${this.count * 100}% Gain`);
   maxCount: number = 999;
-  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText(this.cost), () => Soaps[1].Amount.gt(this.cost)];
+  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText(`${this.cost.format()} Orange Soap`), () => Soaps[1].Amount.gt(this.cost)];
   ShowCondition: () => boolean = () => true;
 }
 
 class TicketConversion extends BaseGenerator {
-  private formula = new Exponential(new Decimal(2), new Decimal(2));
+  private formula = new Exponential(new Decimal(121.3), new Decimal(2));
   private get cost() {
     return this.formula.Integrate(this.count, this.count + this.buyAmount);
   }
   buy: () => void = () => {
-    Player.Money.minus(this.cost);
+    Player.Charge = Player.Charge.minus(this.cost);
   }
   name: string = "Ticket Conversion"
   description: () => ReactiveText = () => new ReactiveText("Converts your excess charge into tickets..")
-  maxCount: number = -1;
-  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText(this.cost), () => Player.Money.gt(this.cost)];
+  maxCount: number = 1e308;
+  Requirements: [() => ReactiveText, () => boolean] = [() => new ReactiveText(`${this.cost.format()} Charge`), () => Player.Charge.gt(this.cost)];
   ShowCondition: () => boolean = () => true;
 }
 

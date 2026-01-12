@@ -2,8 +2,6 @@
 	import SoapProduction from "./SoapProduction.svelte";
 	import { onMount } from "svelte";
 	import { SoapPages } from "../../../Game/Soap/Soap.svelte";
-	import { PageHandler } from "../Pages";
-	import { Pages } from "../../page.svelte";
 	import SoapUpgrades from "./SoapUpgrades.svelte";
 	import Foundry from "../Foundry/Foundry.svelte";
 	import { DevHacks } from "../../../Game/Game.svelte";
@@ -13,8 +11,9 @@
 		UpgradeBought,
 		UpgradesKey,
 	} from "../../../Game/Soap/Upgrades.svelte";
+	import { PageHandler, PagesEnum } from "../Pages.svelte.ts";
 
-	const pageHandler = new PageHandler<SoapPages>(false, Pages.Soap);
+	const pageHandler = new PageHandler<SoapPages>(false, PagesEnum.Soap);
 
 	let upgradesUnlocked = $state(false);
 	let foundryUnlocked = $state(false);
@@ -53,7 +52,7 @@
 	});
 </script>
 
-<div class="absolute w-full pt-2">
+<div class="absolute w-full pt-2 flex flex-col h-full">
 	<div class="flex flex-row w-full ml-2 pr-2" id="soap-nav">
 		<button onclick={() => pageHandler.ChangePage(SoapPages.Produce)}>
 			Produce
@@ -72,7 +71,10 @@
 		{/if}
 		<div class="ml-auto"></div>
 	</div>
-	<div id="soap-pages" class="w-full flex flex-row h-screen overflow-y-scroll">
+	<div
+		id="soap-pages"
+		class="w-full flex flex-row h-screen overflow-y-scroll relative"
+	>
 		<SoapProduction />
 		<SoapUpgrades />
 		<Foundry />

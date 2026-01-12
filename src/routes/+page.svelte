@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { MainPageHandler, Pages } from "./page.svelte.ts";
 	import { DevHacks, MainLoop } from "../Game/Game.svelte.ts";
-	import { SaveSystem } from "../Game/Saves.ts";
 	import { dev } from "$app/environment";
 	import Settings from "./Pages/Settings.svelte";
 	import Soap from "./Pages/Soap/Soap.svelte";
-	import { PagesState } from "./Pages/Pages.ts";
 	import Howtfdoiplay from "./Pages/guide/howtfdoiplay.svelte";
 	import Cat from "./Pages/Cat/Cat.svelte";
 	import Achievements from "./Pages/Achievements/Achievements.svelte";
@@ -13,40 +10,29 @@
 	import NotificationHandler from "./Components/NotificationHandler.svelte";
 	import NavBar from "./Components/NavBar.svelte";
 	import { isLoading } from "svelte-i18n";
+	import { MainPageHandler, PagesEnum } from "./Pages/Pages.svelte.ts";
+
 	MainLoop.start();
-
-	async function LoadPlayerData() {
-		let playerSaveData =
-			localStorage.getItem("player_save") ||
-			(await SaveSystem.exportToString());
-		if (!playerSaveData) {
-			SaveSystem.events.onAfterLoad.add((e) => {
-				console.error(e.error);
-			});
-		}
-
-		return playerSaveData;
-	}
 
 	isLoading.subscribe((state) => {
 		if (state) return;
-		PagesState.set(Pages.Settings, -1);
-		PagesState.set(Pages.Soap, -1);
-
 		let elements = document.getElementById("locations")?.children!;
-		MainPageHandler.RegisterPages(Pages.Soap, elements[0] as HTMLElement);
-		MainPageHandler.RegisterPages(Pages.Cat, elements[1] as HTMLElement);
+		MainPageHandler.RegisterPages(PagesEnum.Soap, elements[0] as HTMLElement);
+		MainPageHandler.RegisterPages(PagesEnum.Cat, elements[1] as HTMLElement);
 		MainPageHandler.RegisterPages(
-			Pages.Achievements,
+			PagesEnum.Achievements,
 			elements[2] as HTMLElement,
 		);
-		MainPageHandler.RegisterPages(Pages.Settings, elements[3] as HTMLElement);
 		MainPageHandler.RegisterPages(
-			Pages.HowTfDoIPlay,
+			PagesEnum.Settings,
+			elements[3] as HTMLElement,
+		);
+		MainPageHandler.RegisterPages(
+			PagesEnum.HowTfDoIPlay,
 			elements[4] as HTMLElement,
 		);
 
-		MainPageHandler.ChangePage(Pages.Soap);
+		MainPageHandler.ChangePage(PagesEnum.Soap);
 	});
 </script>
 

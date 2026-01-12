@@ -7,6 +7,7 @@ import { SaveSystem } from "../../../Game/Saves";
 import { ResetUpgrades, UpgradesData, UpgradesKey } from "../../../Game/Soap/Upgrades.svelte";
 import { log } from "console";
 import { AchievementKey, AchievementsData } from "../../../Game/Achievements/Achievements.svelte";
+import { ChargeMilestones } from "../Foundry/Foundry.svelte.ts";
 
 export class SoapProducer {
   public SoapType: SoapType;
@@ -66,6 +67,8 @@ export class SoapProducer {
       .mul(1 + this.QualityCount).div(3) // Multi from upgrade
       .mul(((upgCount) + 1) * Math.pow(2, Math.floor(upgCount) / 25))
       .mul(this.DecelerateCount > 0 ? new Decimal(2500).mul(Decimal.pow(5, this.DecelerateCount + 1)) : 1) // mult from decel
+      .mul(ChargeMilestones.get(0)!.formula())
+
     return amt;
   }
 
@@ -75,6 +78,7 @@ export class SoapProducer {
       .mul(1 + (this.SpeedCount)) // Multi from upgrade 
       .mul(((upgCount) + 1) * Math.pow(2, Math.floor(upgCount / 25)))
       .div(this.DecelerateCount !== 0 ? this.DecelerateCount * 5 : 1) // nerfs from decel
+      .mul(ChargeMilestones.get(1)!.formula())
 
     return amt
   }

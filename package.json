@@ -43,7 +43,6 @@
     "cloc": "2.6.0-cloc",
     "madge": "^8.0.0",
     "prettier-plugin-svelte": "^3.4.1",
-    "svelte-awesome-color-picker": "^4.1.0",
     "svelte-i18n": "^4.0.1",
     "svelte5-collapsible": "^1.1.8"
   }
