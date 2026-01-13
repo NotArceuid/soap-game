@@ -79,6 +79,7 @@ export enum PagesEnum {
   Cat,
   Achievements,
   HowTfDoIPlay,
+  Shop
 }
 
 export const MainPageHandler = new PageHandler<PagesEnum>(true);

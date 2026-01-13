@@ -23,8 +23,10 @@ export abstract class SoapBase implements ISoapData {
   public Sell(amount: Decimal) {
     let eatMult = this.EatAmount.gt(0) ? (this.EatAmount.div("5e12")) : 1;
     let mult = eatMult;
+    let net = amount.mul(mult)
 
-    Player.Money = Player.Money.add(amount.mul(mult!));
+    this.Amount = this.Amount.minus(net);
+    Player.Money = Player.Money.add(net);
   }
 
   public SoapMade(gain: Decimal) {
@@ -175,8 +177,8 @@ export interface SoapSaveData {
   type: SoapType,
   unlocked: boolean,
   amount: Decimal,
-  eatamt: Decimal,
-  producedamt: Decimal,
+  eaten: Decimal,
+  produced: Decimal,
 }
 
 export const Soaps: Record<SoapType, SoapBase> = $state({
@@ -197,8 +199,8 @@ SaveSystem.SaveCallback<SoapSaveData[]>("soap", () => {
   for (const [k, v] of Object.entries(Soaps)) {
     soap.push({
       type: SoapType[k as keyof typeof SoapType],
-      producedamt: new Decimal(v.ProducedAmount),
-      eatamt: v.EatAmount,
+      produced: new Decimal(v.ProducedAmount),
+      eaten: v.EatAmount,
       unlocked: v.Unlocked,
       amount: v.Amount,
     })
@@ -211,8 +213,8 @@ SaveSystem.SaveCallback<SoapSaveData[]>("soap", () => {
 SaveSystem.LoadCallback<SoapSaveData[]>("soap", (data) => {
   for (const [k, v] of Object.entries(data)) {
     let soapIdx = SoapType[k as keyof typeof SoapType];
-    Soaps[soapIdx].ProducedAmount = new Decimal(v.producedamt);
-    Soaps[soapIdx].EatAmount = new Decimal(v.eatamt);
+    Soaps[soapIdx].ProducedAmount = new Decimal(v.produced);
+    Soaps[soapIdx].EatAmount = new Decimal(v.eaten);
     Soaps[soapIdx].Unlocked = v.unlocked;
     Soaps[soapIdx].Amount = new Decimal(v.amount);
   }

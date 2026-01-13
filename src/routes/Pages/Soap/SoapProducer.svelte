@@ -5,7 +5,6 @@
 	import { SoapProducers } from "./SoapProducer.svelte.ts";
 	import { CollapsibleCard } from "svelte5-collapsible";
 	import { slide } from "svelte/transition";
-	import { SaveSystem } from "../../../Game/Saves.ts";
 	import {
 		UpgradesData,
 		UpgradesKey,
@@ -16,25 +15,36 @@
 
 	let {
 		type,
+		lockedText,
 		canAutobuyQuality,
 		canAutobuySpeed,
+
 		canAutoDeccelerate,
-		deccelerateUnlockThreshold,
-		autoEatInterval,
+		canDeccelerate,
+
+		canEat,
 		canAutoEat,
+		autoEatInterval,
 		autoEatBonus,
+
 		autoSellInterval,
 		canAutoSell,
 		autoSellBonus,
 	}: {
 		type: SoapType;
+		lockedText: string;
+
 		canAutobuyQuality: boolean;
 		canAutobuySpeed: boolean;
+
 		canAutoDeccelerate: boolean;
-		deccelerateUnlockThreshold: Decimal;
+		canDeccelerate: boolean;
+
 		autoEatInterval: number;
+		canEat: boolean;
 		canAutoEat: boolean;
 		autoEatBonus: Decimal;
+
 		autoSellInterval: number;
 		canAutoSell: boolean;
 		autoSellBonus: Decimal | number;
@@ -109,33 +119,7 @@
 		}
 	});
 
-	let eatenUnlocked = $state(false);
-	let decelerateUnlocked = $state(false);
-	$effect(() => {
-		if (producer.Speed.gt(deccelerateUnlockThreshold))
-			decelerateUnlocked = true;
-	});
-
-	interface SoapProducerSave {
-		eaten: boolean;
-		decelerate: boolean;
-	}
-
-	// svelte-ignore state_referenced_locally
-	let saveKey = `${type} producer`;
-	// svelte-ignore state_referenced_locally
-	SaveSystem.SaveCallback<SoapProducerSave>(saveKey, () => {
-		return {
-			eaten: eatenUnlocked,
-			decelerate: decelerateUnlocked,
-		};
-	});
-
-	// svelte-ignore state_referenced_locally
-	SaveSystem.LoadCallback<SoapProducerSave>(saveKey, (data) => {
-		eatenUnlocked = data.eaten;
-		decelerateUnlocked = data.decelerate;
-	});
+	producer.Unlocked = true;
 </script>
 
 <div class="border p-2">
@@ -170,6 +154,7 @@
 								.gt(Player.Money)}
 						>
 							{#snippet content()}
+								{log(producer.GetQualityCost(qualityCostAmt).gt(Player.Money))}
 								Upgrade Quality +{qualityCostAmt}
 								<div>
 									({producer.QualityCount}) Cost: ${producer
@@ -205,6 +190,7 @@
 							}}
 						>
 							{#snippet content()}
+								{log(producer.GetSpeedCost(speedCostAmt))}
 								Upgrade Speed +{speedCostAmt}
 								<div>
 									({producer.SpeedCount}) Cost: ${producer
@@ -231,7 +217,7 @@
 						{/if}
 					</div>
 
-					{#if decelerateUnlocked || DevHacks.skipUnlock}
+					{#if canDeccelerate || DevHacks.skipUnlock}
 						<ActionButton
 							onclick={() => producer.Decelerate()}
 							disabled={producer.Speed.lte(producer.DecelerateReq)}
@@ -244,7 +230,7 @@
 							{/snippet}
 						</ActionButton>
 					{/if}
-					{#if eatenUnlocked || DevHacks.skipUnlock}
+					{#if canEat || DevHacks.skipUnlock}
 						<ActionButton
 							onclick={() => producer.Eat()}
 							disabled={producer.ProducedAmount.lt(producer.EatReq)}
@@ -311,7 +297,7 @@
 					<h1 class="ml-auto">Quality: {producer.Quality.format()}</h1>
 					<h1 class="ml-auto">Speed: {producer.Speed.format()}</h1>
 				</div>
-				{#if eatenUnlocked || DevHacks.skipUnlock}
+				{#if canEat || DevHacks.skipUnlock}
 					<div class="flex flex-row">
 						<h1>
 							Eaten: {producer.EatAmount.format()}
@@ -324,7 +310,7 @@
 			{/snippet}
 		</CollapsibleCard>
 	{:else}
-		<div class="flex flex-row">
+		<div class="flex flex-row min-w-64 min-h-16 content-center justify-center">
 			<ActionButton
 				onclick={() => {
 					producer.Unlocked = true;
@@ -332,7 +318,7 @@
 				disabled={false}
 			>
 				{#snippet content()}
-					Unlock Soap Producer?
+					{lockedText}
 				{/snippet}
 			</ActionButton>
 		</div>

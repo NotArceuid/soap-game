@@ -32,7 +32,6 @@
 				>
 					{#snippet content()}
 						<span>
-							{log(upgrade[1].Requirements[1]() || currUpgrade == upgrade[1])}
 							{upgrade[1].name} ({upgrade[1].count}/{upgrade[1].maxCount})
 						</span>
 					{/snippet}

@@ -336,7 +336,9 @@ SaveSystem.LoadCallback<UpgradeSaveData[]>(saveKey, (data) => {
     UpgradesData[key].count = entry.count;
     UpgradesData[key].unlocked = entry.unlocked;
   });
-}); interface UpgradeSaveData {
+});
+
+interface UpgradeSaveData {
   key: UpgradesKey;
   count: number;
   unlocked: boolean;

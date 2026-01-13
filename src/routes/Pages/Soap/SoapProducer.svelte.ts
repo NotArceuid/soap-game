@@ -8,6 +8,7 @@ import { ResetUpgrades, UpgradesData, UpgradesKey } from "../../../Game/Soap/Upg
 import { AchievementKey, AchievementsData } from "../../../Game/Achievements/Achievements.svelte";
 import { ChargeMilestones } from "../Foundry/Foundry.svelte.ts";
 import { log } from "console";
+import type { TypeOfExpression } from "typescript";
 
 export class SoapProducer {
   public SoapType: SoapType;
@@ -31,29 +32,6 @@ export class SoapProducer {
 
   constructor(soapType: SoapType) {
     this.SoapType = $state(soapType);
-
-    let saveKey = this.SoapType.toString();
-    SaveSystem.SaveCallback<SoapProducerSave>(saveKey, () => {
-      return {
-        speedcnt: this.SpeedCount,
-        qualitycnt: this.QualityCount,
-        unlocked: this.Unlocked,
-        decelerate: this.DecelerateCount,
-        eatamt: this.EatAmount,
-        producedamt: this.ProducedAmount,
-        type: this.SoapType,
-      }
-    });
-    SaveSystem.LoadCallback<SoapProducerSave>(saveKey, (data) => {
-      this.SoapType = data.type;
-
-      this.SpeedCount = data.speedcnt;
-      this.QualityCount = data.qualitycnt;
-      this.Unlocked = data.unlocked;
-      this.DecelerateCount = data.decelerate;
-      this.EatAmount = new Decimal(data.eatamt);
-      this.ProducedAmount = new Decimal(data.producedamt);
-    });
   }
 
   GetSpeedCost(amount: number) {
@@ -184,12 +162,11 @@ export class SoapProducer {
 }
 
 export interface SoapProducerSave {
-  speedcnt: number;
-  qualitycnt: number;
+  speed_count: number;
+  quality_count: number;
   unlocked: boolean;
-  decelerate: number;
-  eatamt: Decimal;
-  producedamt: Decimal;
+  decelerate_count: number;
+  lifetime_produced: Decimal;
   type: SoapType;
 }
 
@@ -211,3 +188,35 @@ export interface AutosellProps {
   CostReduction: Decimal;
   Cap: Decimal;
 }
+
+
+
+let saveKey = "soap_producers";
+SaveSystem.SaveCallback<SoapProducerSave[]>(saveKey, () => {
+  const producers: SoapProducerSave[] = [];
+  Object.values(SoapProducers).forEach((value, idx) => {
+    producers.push({
+      speed_count: value.SpeedCount,
+      quality_count: value.QualityCount,
+      unlocked: value.Unlocked,
+      decelerate_count: value.DecelerateCount,
+      lifetime_produced: value.ProducedAmount,
+      type: idx,
+    })
+  })
+
+  return producers;
+});
+
+SaveSystem.LoadCallback<SoapProducerSave[]>(saveKey, (data) => {
+  data.forEach((value, index) => {
+    let key = Object.keys(SoapProducers)[index] as unknown as keyof typeof SoapProducers
+    SoapProducers[key].SoapType = index;
+    SoapProducers[key].SpeedCount = value.speed_count;
+    SoapProducers[key].QualityCount = value.quality_count;
+    SoapProducers[key].Unlocked = value.unlocked;
+    SoapProducers[key].DecelerateCount = value.decelerate_count;
+    SoapProducers[key].ProducedAmount = new Decimal(value.lifetime_produced);
+  })
+});
+
