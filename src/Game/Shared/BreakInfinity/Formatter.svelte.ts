@@ -1,4 +1,4 @@
-import { type Decimal } from "./Decimal.svelte";
+import { Decimal } from "./Decimal.svelte";
 
 // Types for the number formatter
 export enum Notation {
@@ -132,13 +132,13 @@ export class NumberFormatter {
   }
 
   format(number: Decimal): string {
-    const absLog10 = Math.abs(number.mantissa) > 0
-      ? number.exponent + Math.log10(Math.abs(number.mantissa))
+    const absLog10 = Decimal.abs(number.mantissa).gt(0)
+      ? number.exponent + Decimal.log10(Decimal.abs(number.mantissa))
       : -Infinity;
 
-    const value = Math.abs(number.mantissa) * Math.pow(10, number.exponent);
+    const value = Decimal.abs(number.mantissa).mul(Decimal.pow(10, number.exponent));
 
-    if (absLog10 >= Math.log10(this.options.forceScientificAbove)) {
+    if (absLog10 >= Decimal.log10(this.options.forceScientificAbove)) {
       return this.formatScientific(value);
     }
 
@@ -160,29 +160,29 @@ export class NumberFormatter {
     return this.options.decimals;
   }
 
-  private formatScientific(value: number): string {
-    if (value === 0) return '0';
-
-    const exponent = Math.floor(Math.log10(Math.abs(value)));
-    const mantissa = value / Math.pow(10, exponent);
+  private formatScientific(value: Decimal): string {
+    if (value.eq(Decimal.ZERO)) return '0';
+    if (value.lt(1000)) return value.toPrecision(2).toString();
+    const exponent = Decimal.floor(Decimal.log10(Decimal.abs(value)));
+    const mantissa = value.div(Decimal.pow(10, exponent));
 
     return `${mantissa.toFixed(this.options.decimals)}e${exponent}`;
   }
 
-  private formatStandard(value: number): string {
-    const absValue = Math.abs(value);
+  private formatStandard(value: Decimal): string {
+    const absValue = Decimal.abs(value);
 
-    if (absValue < 0.1) {
+    if (absValue.lt(0.1)) {
       return "0";
     }
 
-    if (absValue < 1000) {
+    if (absValue.lt(1000)) {
       return this.formatSmallNumber(value);
     }
 
     for (let i = LARGE_NUMBER_NAMES.length - 1; i >= 0; i--) {
-      if (absValue >= LARGE_NUMBER_NAMES[i].threshold) {
-        const divided = value / LARGE_NUMBER_NAMES[i].threshold;
+      if (absValue.gte(LARGE_NUMBER_NAMES[i].threshold)) {
+        const divided = value.div(LARGE_NUMBER_NAMES[i].threshold);
         return `${divided.toFixed(this.options.decimals)}${LARGE_NUMBER_NAMES[i].symbol}`;
       }
     }
@@ -190,16 +190,12 @@ export class NumberFormatter {
     return this.formatSmallNumber(value);
   }
 
-  private formatSmallNumber(value: number): string {
-    if (Math.abs(value) < 0.01 && value !== 0) {
+  private formatSmallNumber(value: Decimal): string {
+    if (Decimal.abs(value).lt(0.01) && value.notEquals(0)) {
       return this.formatScientific(value);
     }
 
-    return value.toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: this.options.decimals,
-      useGrouping: true
-    });
+    return value.toPrecision(2).toLocaleString();
   }
 }
 export const formatter = new NumberFormatter(Notation.Standard, {
