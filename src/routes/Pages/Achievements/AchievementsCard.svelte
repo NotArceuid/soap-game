@@ -6,7 +6,7 @@
 
 	let { idx }: { idx: number } = $props();
 	let achievement = $derived(AchievementsData[idx as AchievementKey]);
-	let unlocked = $derived(achievement.unlocked ? "bg-green-200/60" : "");
+	let unlocked = $derived(achievement.unlocked ? "bg-green-200/20" : "");
 </script>
 
 <div class="border {unlocked} m-2 p-2 min-w-xs min-h-24 max-w-xs">

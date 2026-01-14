@@ -19,7 +19,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="w-full h-full text-gray-900 transition-colors duration-300">
+<div class="w-full h-full transition-colors duration-300 bg-bg text-font border-border">
 	<main class="w-full h-full">
 		{@render children?.()}
 	</main>

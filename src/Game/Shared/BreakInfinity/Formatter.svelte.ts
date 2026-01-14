@@ -1,6 +1,5 @@
 import { Decimal } from "./Decimal.svelte";
 
-// Types for the number formatter
 export enum Notation {
   Standard,
   Scientific
@@ -162,7 +161,9 @@ export class NumberFormatter {
 
   private formatScientific(value: Decimal): string {
     if (value.eq(Decimal.ZERO)) return '0';
-    if (value.lt(1000)) return value.toPrecision(2).toString();
+    if (value.lt(1000)) {
+      return value.toPrecision(2).toString();
+    }
     const exponent = Decimal.floor(Decimal.log10(Decimal.abs(value)));
     const mantissa = value.div(Decimal.pow(10, exponent));
 
@@ -174,10 +175,6 @@ export class NumberFormatter {
 
     if (absValue.lt(0.1)) {
       return "0";
-    }
-
-    if (absValue.lt(1000)) {
-      return this.formatSmallNumber(value);
     }
 
     for (let i = LARGE_NUMBER_NAMES.length - 1; i >= 0; i--) {
@@ -194,8 +191,7 @@ export class NumberFormatter {
     if (Decimal.abs(value).lt(0.01) && value.notEquals(0)) {
       return this.formatScientific(value);
     }
-
-    return value.toPrecision(2).toLocaleString();
+    return value.toNumber().toFixed(2);
   }
 }
 export const formatter = new NumberFormatter(Notation.Standard, {

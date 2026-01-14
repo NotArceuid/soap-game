@@ -37,7 +37,7 @@
 </script>
 
 {#if isLoading}
-	<div class="h-full relative m-3 p-3 flex flex-col">
+	<div class="h-full relative p-6 flex flex-col">
 		<NavBar />
 		<div class="flex flex-rows w-full h-full">
 			<div id="locations" class="w-11/12 relative border-l">

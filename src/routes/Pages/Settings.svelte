@@ -79,6 +79,7 @@
 	let version = PKG_VERSION;
 
   function RotateTheme() {
+    let oldTheme = Settings.Theme;
     let entries = Object.values(ColorTheme).filter(x => typeof x === 'number').map(x => x as ColorTheme);
     let idx = entries.findIndex((e) => e == Settings.Theme); 
     if (idx == -1 || idx >= entries.length -1) 
@@ -87,6 +88,14 @@
       idx = idx + 1
 
     Settings.Theme = entries[idx];
+    document.documentElement.classList.remove(classList[oldTheme]);
+    switch (Settings.Theme) {
+      case ColorTheme.Dark: 
+        document.documentElement.classList.toggle(classList[ColorTheme.Dark]);
+        break;
+      case ColorTheme.Light: 
+        document.documentElement.classList.toggle(classList[ColorTheme.Light]);
+    }
   }
 
   function RotateNotation() {
@@ -101,6 +110,11 @@
 
     formatter.Notation = Settings.Format;
   }
+
+  let classList: Record<ColorTheme, string> = {
+		[ColorTheme.Light]: "light",
+		[ColorTheme.Dark]: "dark"
+	}
 </script>
 
 <div class="w-full p-2 absolute h-full">

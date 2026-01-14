@@ -17,7 +17,7 @@ $effect(() => {
 });
 </script>
 
-<div class="absolute px-4 w-full flex flex-col h-full overflow-y-hidden">
+<div class="absolute w-full flex flex-col h-full overflow-y-hidden">
 <div class="relative w-full h-full">
   <div class="flex flex-wrap overflow-y-scroll">
     {#each data as upgrade}
