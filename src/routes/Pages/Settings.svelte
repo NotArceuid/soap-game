@@ -3,7 +3,11 @@
 	import { onMount } from "svelte";
 	import { _ } from "svelte-i18n";
 	import { Player } from "../../Game/Player.svelte.ts";
-	import { formatter, formatTime, Notation } from "../../Game/Shared/BreakInfinity/Formatter.svelte.ts";
+	import {
+		formatter,
+		formatTime,
+		Notation,
+	} from "../../Game/Shared/BreakInfinity/Formatter.svelte.ts";
 	import SaveSlot from "./SaveSlot.svelte";
 	import { ColorTheme, Settings } from "./Settings.svelte.ts";
 
@@ -78,63 +82,70 @@
 	// @ts-ignore
 	let version = PKG_VERSION;
 
-  function RotateTheme() {
-    let oldTheme = Settings.Theme;
-    let entries = Object.values(ColorTheme).filter(x => typeof x === 'number').map(x => x as ColorTheme);
-    let idx = entries.findIndex((e) => e == Settings.Theme); 
-    if (idx == -1 || idx >= entries.length -1) 
-      idx = 0;
-    else 
-      idx = idx + 1
+	function RotateTheme() {
+		let oldTheme = Settings.Theme;
+		let entries = Object.values(ColorTheme)
+			.filter((x) => typeof x === "number")
+			.map((x) => x as ColorTheme);
+		let idx = entries.findIndex((e) => e == Settings.Theme);
+		if (idx == -1 || idx >= entries.length - 1) idx = 0;
+		else idx = idx + 1;
 
-    Settings.Theme = entries[idx];
-    document.documentElement.classList.remove(classList[oldTheme]);
-    switch (Settings.Theme) {
-      case ColorTheme.Dark: 
-        document.documentElement.classList.toggle(classList[ColorTheme.Dark]);
-        break;
-      case ColorTheme.Light: 
-        document.documentElement.classList.toggle(classList[ColorTheme.Light]);
-    }
-  }
-
-  function RotateNotation() {
-    let entries = Object.values(Notation).filter(x => typeof x === 'number').map(x => x as Notation);
-    let idx = entries.findIndex((e) => e == Settings.Format); 
-    if (idx == -1 || idx >= entries.length -1) 
-      idx = 0;
-      else 
-      idx = idx + 1
-
-    Settings.Format = entries[idx];
-
-    formatter.Notation = Settings.Format;
-  }
-
-  let classList: Record<ColorTheme, string> = {
-		[ColorTheme.Light]: "light",
-		[ColorTheme.Dark]: "dark"
+		Settings.Theme = entries[idx];
+		document.documentElement.classList.remove(classList[oldTheme]);
+		switch (Settings.Theme) {
+			case ColorTheme.Dark:
+				document.documentElement.classList.toggle(classList[ColorTheme.Dark]);
+				break;
+			case ColorTheme.Light:
+				document.documentElement.classList.toggle(classList[ColorTheme.Light]);
+		}
 	}
+
+	function RotateNotation() {
+		let entries = Object.values(Notation)
+			.filter((x) => typeof x === "number")
+			.map((x) => x as Notation);
+		let idx = entries.findIndex((e) => e == Settings.Format);
+		if (idx == -1 || idx >= entries.length - 1) idx = 0;
+		else idx = idx + 1;
+
+		Settings.Format = entries[idx];
+
+		formatter.Notation = Settings.Format;
+	}
+
+	let classList: Record<ColorTheme, string> = {
+		[ColorTheme.Light]: "light",
+		[ColorTheme.Dark]: "dark",
+	};
 </script>
 
 <div class="w-full p-2 absolute h-full">
-	<div class="w-full flex flex-row space-x-8 text-center pb-4">
-		<div class="w-4/12 text-center">
+	<div
+		class="w-full flex flex-wrap flex-row space-x-8 text-center pb-4 justify-center"
+	>
+		<div class="w-3/12 p-2 space-y-1">
+			<h1 class="text-center font-bold">Settings</h1>
+			<div class="flex flex-row flex-wrap gap-2">
+				<button onclick={RotateNotation} class="w-full"
+					>Format Type: {Notation[Settings.Format]}</button
+				>
+				<button onclick={RotateTheme} class="w-full"
+					>Color Theme: {ColorTheme[Settings.Theme]}</button
+				>
+			</div>
+		</div>
+
+		<div class="w-3/12 text-center">
 			<h1 class="text-center font-bold">Info</h1>
 			<p>{`${name} v${version}`}</p>
 			<h1>Time wasted: {formatTime(Player._player.Playtime)}</h1>
 		</div>
 
-		<div class="w-4/12 p-2 space-y-1">
-			<h1 class="text-center font-bold">Settings</h1>
-			<div class="grid grid-cols-2 gap-2">
-				<button onclick={RotateNotation} class="w-full">Format Type: {Notation[Settings.Format]}</button>
-				<button onclick={RotateTheme} class="w-full">Color Theme: {ColorTheme[Settings.Theme]}</button>
-			</div>
-		</div>
-		<div class="w-4/12 p-2 space-y-1">
+		<div class="w-3/12 p-2 space-y-1">
 			<h1 class="text-center font-bold">Saves</h1>
-			<div class="grid grid-cols-2 gap-2">
+			<div class="flex flex-wrap flex-row gap-2">
 				<button class="w-full" onclick={saveToClipboard}
 					>Save to clipboard</button
 				>

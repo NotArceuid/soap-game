@@ -18,6 +18,7 @@
 		AchievementsData,
 		UnlockAchievement,
 	} from "../../../Game/Achievements/Achievements.svelte.ts";
+	import { fade } from "svelte/transition";
 
 	const pageHandler = new PageHandler<SoapPages>(false, PagesEnum.Soap);
 

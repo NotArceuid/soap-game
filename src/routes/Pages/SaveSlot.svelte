@@ -54,32 +54,30 @@
 	<div>
 		<h1 class="text-left">Save Slot 1</h1>
 	</div>
-	<div class="flex flex-row space-x-2">
-		<button class="w-full">Save</button>
-		<button class="w-full">Load</button>
-		<button class="w-full" onclick={slidedown}>Edit</button>
+	<div class="flex flex-wrap flex-row gap-2 mb-2">
+		<button class="flex-1">Save</button>
+		<button class="flex-1" onclick={slidedown}>Load</button>
 	</div>
 	<CollapsibleCard transition={{ transition: slide }} {isOpen}>
 		{#snippet header()}
-			<br />
+			<div class="h-2"></div>
 		{/snippet}
 		{#snippet body()}
-			<div class="flex flex-row">
-				<input
-					type="text"
-					bind:value={text}
-					class="border h-6 w-10/12"
-					placeholder="Paste your save here"
-				/>
-				<button
-					class="h-6 w-2/12"
-					onclick={load}
-					style="padding: 0px; padding-left: 5px; padding-right: 5px;"
-					>Load
-				</button>
-			</div>
-			<div class="flex flex-row">
-				<input type="file" value="save" class="w-10/12 h-6 border" />
+			<div class="space-y-2">
+				<div class="flex items-center gap-2">
+					<input
+						type="text"
+						bind:value={text}
+						class="border h-8 grow px-2"
+						placeholder="Paste your save here"
+					/>
+					<button class="h-8 px-4 whitespace-nowrap" onclick={load}
+						>Load
+					</button>
+				</div>
+				<div class="flex items-center">
+					<input type="file" value="save" class="w-full h-8 border px-2" />
+				</div>
 			</div>
 		{/snippet}
 	</CollapsibleCard>

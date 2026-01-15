@@ -9,7 +9,7 @@ export const PagesState: Map<PagesEnum, number> = new Map<PagesEnum, number>();
 export class PageHandler<T extends number> {
   public Parent: PagesEnum = PagesEnum.Soap;
   public PagesMap = new SvelteMap<T, HTMLElement>();
-  private currentPage: T | null = null;
+  public currentPage: T | null = null;
   private isVisible: boolean = false;
   private root: boolean = false;
 
@@ -51,9 +51,6 @@ export class PageHandler<T extends number> {
   }
 
   ChangePage(page: T): void {
-    if (this.currentPage === page)
-      return;
-
     this.PagesMap.forEach((v) => {
       v.style.visibility = "hidden";
     });

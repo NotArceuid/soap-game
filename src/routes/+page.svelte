@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DevHacks, MainLoop } from "../Game/Game.svelte.ts";
+	import { DevHacks, MainLoop, OfflineProps } from "../Game/Game.svelte.ts";
 	import { dev } from "$app/environment";
 	import Settings from "./Pages/Settings.svelte";
 	import Soap from "./Pages/Soap/Soap.svelte";
@@ -11,6 +11,8 @@
 	import NavBar from "./Components/NavBar.svelte";
 	import { isLoading } from "svelte-i18n";
 	import { MainPageHandler, PagesEnum } from "./Pages/Pages.svelte.ts";
+	import ScreenSaver from "./ScreenSaver.svelte";
+	import { log } from "console";
 
 	MainLoop.start();
 
@@ -34,10 +36,41 @@
 
 		MainPageHandler.ChangePage(PagesEnum.Soap);
 	});
+
+	let previousPage = $state(PagesEnum.Soap);
+	$effect(() => {
+		if (OfflineProps.calculating) {
+			previousPage = MainPageHandler.currentPage ?? PagesEnum.Soap;
+			MainPageHandler.PagesMap.forEach((v) => {
+				v.style.visibility = "hidden";
+			});
+		}
+		if (!OfflineProps.calculating) {
+			MainPageHandler.ChangePage(previousPage);
+		}
+	});
 </script>
 
 {#if isLoading}
-	<div class="h-full relative p-6 flex flex-col">
+	<div
+		class="flex justify-center items-center absolute w-full h-full {OfflineProps.calculating
+			? 'visible'
+			: 'invisible'}"
+	>
+		<ScreenSaver active={OfflineProps.calculating} />
+		<div class="border absolute flex flex-col justify-center items-center p-2">
+			<h1>Calculating Offline Progress</h1>
+			<div>
+				{OfflineProps.initialTick -
+					OfflineProps.offlineTick}/{OfflineProps.initialTick}
+			</div>
+		</div>
+	</div>
+	<div
+		class="h-full p-6 flex flex-col {OfflineProps.calculating
+			? 'invisible'
+			: 'visible'}"
+	>
 		<NavBar />
 		<div class="flex flex-rows w-full h-full">
 			<div id="locations" class="w-11/12 relative border-l">
@@ -47,9 +80,9 @@
 				<Settings />
 				<Howtfdoiplay />
 			</div>
-      <div class="min-w-48">
-			<CurrenciesPanel />
-      </div>
+			<div class="min-w-48">
+				<CurrenciesPanel />
+			</div>
 		</div>
 
 		<div class="absolute bottom-5 right-5">

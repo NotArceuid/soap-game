@@ -1,3 +1,6 @@
+import { log } from "console";
+import { Player } from "./Player.svelte";
+import { SaveSystem } from "./Saves";
 import { InvokeableEvent } from "./Shared/Events";
 
 enum GameloopState {
@@ -22,7 +25,6 @@ export const Update: InvokeableEvent<[number, number]> = new InvokeableEvent<
   [number, number]
 >();
 export const Render: InvokeableEvent<number> = new InvokeableEvent<number>();
-export const Panic: InvokeableEvent<null> = new InvokeableEvent();
 
 export class GameLoop {
   public state: GameloopState;
@@ -37,15 +39,12 @@ export class GameLoop {
   public onRender(interpolation: number) {
     Render.invoke(interpolation);
   }
-  public onPanic() {
-    Panic.invoke(null);
-  }
 
   constructor(options: GameLoopOptions = {}) {
     this.state = GameloopState.STOPPED;
     this.options = {
       step: 500 / 10,
-      maxUpdates: 300,
+      maxUpdates: 500,
       ...options,
     };
 
@@ -64,28 +63,6 @@ export class GameLoop {
     return this.state === GameloopState.RUNNING;
   }
 
-  start(): void {
-    if (this.isStopped) {
-      this.state = GameloopState.RUNNING;
-
-      this.timing = {
-        last: null,
-        total: 0,
-        delta: 0,
-        lag: 0,
-      };
-
-      this.frame = requestAnimationFrame(this.tick);
-    }
-  }
-
-  stop(): void {
-    if (this.isRunning || this.isPaused) {
-      this.state = GameloopState.STOPPED;
-      cancelAnimationFrame(this.frame);
-    }
-  }
-
   pause(): void {
     if (this.isRunning) {
       this.state = GameloopState.PAUSED;
@@ -100,6 +77,27 @@ export class GameLoop {
     }
   }
 
+  start(): void {
+    if (this.isStopped) {
+      this.state = GameloopState.RUNNING;
+
+      this.timing = {
+        last: null,
+        total: 0,
+        delta: 0,
+        lag: 0,
+      };
+
+      this.frame = requestAnimationFrame(this.tick.bind(this));
+    }
+  }
+
+  stop(): void {
+    if (this.isRunning || this.isPaused) {
+      this.state = GameloopState.STOPPED;
+      cancelAnimationFrame(this.frame);
+    }
+  }
   private tick(time: number): void {
     if (this.timing.last === null) this.timing.last = time;
     this.timing.delta = time - this.timing.last;
@@ -114,21 +112,46 @@ export class GameLoop {
       this.onUpdate(this.options.step, this.timing.total);
       this.numberOfUpdates++;
       if (this.numberOfUpdates >= this.options.maxUpdates) {
-        this.onPanic();
         break;
       }
     }
 
     this.onRender(this.timing.lag / this.options.step);
-
     this.frame = requestAnimationFrame(this.tick);
+
+    if (OfflineProps.calculating) {
+      OfflineProps.offlineTick -= 1;
+      if (OfflineProps.offlineTick <= 0) {
+        OfflineProps.calculating = false;
+        MainLoop.restart();
+      }
+    }
+
   }
 
   restart() {
     this.stop()
-    this.options.step = 500 / (DevHacks.speedhack ? 50 : 10);
+    if (OfflineProps.calculating)
+      this.options.step = 1;
+    else
+      this.options.step = 500 / (DevHacks.speedhack ? 50 : 10);
+
     this.start()
   }
+}
+
+export const OfflineProps = $state({
+  initialTick: 0,
+  offlineTick: 0,
+  calculating: false,
+})
+
+export function RunOfflineCalculations(tick: number) {
+  OfflineProps.initialTick = tick;
+  OfflineProps.offlineTick = tick;
+
+  OfflineProps.calculating = true;
+  MainLoop.restart();
 }
 
 export const DevHacks = $state({
@@ -138,7 +161,3 @@ export const DevHacks = $state({
 
 export const MainLoop = new GameLoop();
 export const AutomationTick: number = 5;
-
-export function CalculateOfflineProgress() {
-
-}
