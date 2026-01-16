@@ -4,7 +4,14 @@
 	import "../app.css";
 	import { RegisterLocales } from "../Locales/i18n";
 	import { onMount } from "svelte";
-	import { RunOfflineCalculations } from "../Game/Game.svelte";
+	import {
+		CalculateOfflineTick,
+		OfflineProps,
+		RunOfflineCalculations,
+	} from "../Game/Game.svelte";
+	import { Settings } from "./Pages/Settings.svelte.ts";
+	import { log } from "console";
+	import { MainPageHandler, PagesEnum } from "./Pages/Pages.svelte.ts";
 	let { children } = $props();
 
 	RegisterLocales();
@@ -16,17 +23,23 @@
 	waitLocale();
 	onMount(() => {
 		window.addEventListener("beforeunload", () => {
-			localStorage.setItem("savedate", new Date().getTime().toString());
+			//localStorage.setItem("savedate", new Date().getTime().toString());
 		});
 	});
 
-	let offlineLoaded = $state(false);
 	onMount(() => {
 		let time = localStorage.getItem("savedate");
 		if (time === "") return;
 
-		let realTime = Number(time) - new Date().getTime();
+		let realTime = CalculateOfflineTick(new Date().getTime() - Number(time));
 		RunOfflineCalculations(realTime);
+
+		document.querySelectorAll("button").forEach((button) => {
+			button.addEventListener("click", () => {
+				const audio = new Audio("/click.wav");
+				if (Settings.Sounds) audio.play();
+			});
+		});
 	});
 </script>
 

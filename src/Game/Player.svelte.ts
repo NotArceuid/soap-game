@@ -16,7 +16,7 @@ interface IPlayer {
 
 class PlayerClass {
   _player = $state<IPlayer>({
-    Name: "Player",
+    Name: "Save Slot 1",
     Playtime: 0,
     SaveTime: 0,
     Money: new Decimal(0),
@@ -93,7 +93,7 @@ class PlayerClass {
   CalculateOfflineProgress() {
     let timeDifference = new Date().getTime() - this._player.SaveTime
     let offlineTick = Math.floor(timeDifference / 5000);
-    RunOfflineCalculations(offlineTick + 100);
+    RunOfflineCalculations(offlineTick);
   }
 }
 

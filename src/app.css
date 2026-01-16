@@ -15,7 +15,7 @@
     @variant dark {
       --color-bg: #1d2021;
       --color-border: #fff;
-      --color-active: #ddd;
+      --color-active: #000;
       --color-inactive: #ccc;
       --color-font: #cccccc;
       --color-hover: #ccc;

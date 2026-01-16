@@ -151,7 +151,9 @@
 				>
 				<button class="w-full" onclick={saveToFile}>Save to file</button>
 			</div>
-			<SaveSlot />
+			<SaveSlot save={true} />
+			<SaveSlot save={true} />
+			<SaveSlot save={true} />
 		</div>
 	</div>
 </div>

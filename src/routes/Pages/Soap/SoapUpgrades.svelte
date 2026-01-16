@@ -45,6 +45,19 @@
 			)
 		)
 			UnlockAchievement(AchievementKey.Cat);
+		if (
+			AchievementsData[AchievementKey.ILY].check(
+				new Decimal(UpgradesData[UpgradesKey.SpeedUpgrade].count),
+			)
+		)
+			UnlockAchievement(AchievementKey.ILY);
+		if (
+			AchievementsData[AchievementKey.Maxxed].check(
+				new Decimal(UpgradesData[UpgradesKey.SpeedUpgrade].count),
+				new Decimal(UpgradesData[UpgradesKey.QualityUpgrade].count),
+			)
+		)
+			UnlockAchievement(AchievementKey.Maxxed);
 	});
 </script>
 

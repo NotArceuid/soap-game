@@ -8,22 +8,24 @@
 	<button onclick={() => MainPageHandler.ChangePage(PagesEnum.Soap)}
 		>Soap</button
 	>
-  {#if UpgradesData[UpgradesKey.CatPrestige].count > 0 || DevHacks.skipUnlock}
-    <button onclick={() => MainPageHandler.ChangePage(PagesEnum.Cat)}>
-    Cat ₍^. .^₎⟆
-    </button>
-  {/if}
+	{#if UpgradesData[UpgradesKey.CatPrestige].count > 0 || DevHacks.skipUnlock}
+		<button onclick={() => MainPageHandler.ChangePage(PagesEnum.Cat)}>
+			Cat ₍^. .^₎⟆
+		</button>
+	{/if}
 	<button onclick={() => MainPageHandler.ChangePage(PagesEnum.Achievements)}
 		>Achievements</button
 	>
 	<button onclick={() => MainPageHandler.ChangePage(PagesEnum.Settings)}
 		>Settings</button
 	>
+	<!-- 
 	<button
 		class="justify-end"
 		onclick={() => MainPageHandler.ChangePage(PagesEnum.HowTfDoIPlay)}
 		>How Do I Play</button
 	>
+-->
 </div>
 
 <style>

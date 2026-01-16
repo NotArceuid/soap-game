@@ -4,7 +4,7 @@
 	import { SoapPages } from "../../../Game/Soap/Soap.svelte";
 	import SoapUpgrades from "./SoapUpgrades.svelte";
 	import Foundry from "../Foundry/Foundry.svelte";
-	import { DevHacks } from "../../../Game/Game.svelte";
+	import { DevHacks, OfflineProps } from "../../../Game/Game.svelte";
 	import { SaveSystem } from "../../../Game/Saves";
 	import { Player } from "../../../Game/Player.svelte";
 	import {
@@ -63,7 +63,11 @@
 	});
 </script>
 
-<div class="absolute w-full pt-2 flex flex-col h-full">
+<div
+	class="absolute w-full pt-2 flex flex-col h-full {OfflineProps.calculating
+		? 'opacity-0'
+		: 'opacity-100'}"
+>
 	<div class="flex flex-row w-full ml-2" id="soap-nav">
 		<button onclick={() => pageHandler.ChangePage(SoapPages.Produce)}>
 			Produce

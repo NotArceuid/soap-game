@@ -6,10 +6,12 @@ export enum ColorTheme {
 
 interface SettingsType {
   Theme: ColorTheme;
-  Format: Notation
+  Format: Notation;
+  Sounds: boolean;
 }
 
 export const Settings: SettingsType = $state({
   Theme: ColorTheme.Light,
   Format: Notation.Standard,
+  Sounds: false,
 })

@@ -3,8 +3,9 @@
 	import { CollapsibleCard } from "svelte5-collapsible";
 	import { SaveSystem } from "../../Game/Saves";
 	import { _ } from "svelte-i18n";
+	import { Player } from "../../Game/Player.svelte";
 
-	let { saveStatus = $bindable() } = $props();
+	let { save, idx, saveStatus = $bindable() } = $props();
 	let isOpen = $state(false);
 	function slidedown() {
 		isOpen = !isOpen;
@@ -23,39 +24,39 @@
 			}
 			setTimeout(() => (saveStatus = ""), 2000);
 		} catch {}
+	}
 
-		function loadFromFile(event: Event) {
-			const input = event.target as HTMLInputElement;
-			const file = input.files?.[0];
-			if (!file) return;
+	function loadFromFile(event: Event) {
+		const input = event.target as HTMLInputElement;
+		const file = input.files?.[0];
+		if (!file) return;
 
-			const reader = new FileReader();
-			reader.onload = async (e) => {
-				try {
-					const content = e.target?.result as string;
-					if (content) {
-						const success = await SaveSystem.importFromString(content);
-						saveStatus = success
-							? $_("settings.saves.loadsave")
-							: $_("settings.saves.loadfailed");
-					}
-				} catch {
-					saveStatus = $_("settings.saves.loadfailed");
+		const reader = new FileReader();
+		reader.onload = async (e) => {
+			try {
+				const content = e.target?.result as string;
+				if (content) {
+					const success = await SaveSystem.importFromString(content);
+					saveStatus = success
+						? $_("settings.saves.loadsave")
+						: $_("settings.saves.loadfailed");
 				}
-				setTimeout(() => (saveStatus = ""), 2000);
-			};
-			reader.readAsText(file);
-			input.value = "";
-		}
+			} catch {
+				saveStatus = $_("settings.saves.loadfailed");
+			}
+			setTimeout(() => (saveStatus = ""), 2000);
+		};
+		reader.readAsText(file);
+		input.value = "";
 	}
 </script>
 
-<div class="border p-2">
-	<div>
-		<h1 class="text-left">Save Slot 1</h1>
-	</div>
+<div class="border p-2 pb-0 w-full">
+	<h1 class="text-left pb-2">{Player.Name}</h1>
 	<div class="flex flex-wrap flex-row gap-2 mb-2">
-		<button class="flex-1">Save</button>
+		{#if save}
+			<button class="flex-1">Save</button>
+		{/if}
 		<button class="flex-1" onclick={slidedown}>Load</button>
 	</div>
 	<CollapsibleCard transition={{ transition: slide }} {isOpen}>
@@ -76,7 +77,12 @@
 					</button>
 				</div>
 				<div class="flex items-center">
-					<input type="file" value="save" class="w-full h-8 border px-2" />
+					<input
+						type="file"
+						class="w-full h-8 border px-2"
+						onchange={loadFromFile}
+						accept=".txt,.json,.save"
+					/>
 				</div>
 			</div>
 		{/snippet}

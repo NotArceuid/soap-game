@@ -1,3 +1,7 @@
+<script lang="ts">
+	import { OfflineProps } from "../../../Game/Game.svelte";
+</script>
+
 <div class="absolute m-2 w-full">
 	<div class="flex flex-row">
 		<div>

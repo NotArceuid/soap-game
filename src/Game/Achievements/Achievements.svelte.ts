@@ -20,7 +20,6 @@ export enum AchievementKey {
   Upgrades,
   Automation,
   OCD,
-  Fractional,
   Millionaire,
   Deccelerate,
   HighSpeed,
@@ -81,11 +80,6 @@ export const AchievementsData: Record<AchievementKey, IAchievement> = $state({
     name: "5 squares",
     description: "Get more than 25 quality and speed upgrades",
     check: (...props) => props[0].gte(25) && props[1].gte(25)
-  },
-  [AchievementKey.Fractional]: {
-    name: "No fractional upgrades bruhv",
-    description: "Input a non integer number",
-    check: (...props) => Number.isInteger(props[0])
   },
   [AchievementKey.Millionaire]: {
     name: "Millionaire",
@@ -166,7 +160,7 @@ export const AchievementsData: Record<AchievementKey, IAchievement> = $state({
   [AchievementKey.Maxxed]: {
     name: "Maxxed",
     description: "Max out the speed and quality upgrades.",
-    check: (...props) => props[0].gt(0)
+    check: (...props) => props[0].gt(600) && props[1].gt(600)
   },
   [AchievementKey.Cat]: {
     name: "1.0.0's final achievement",

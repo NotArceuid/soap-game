@@ -16,11 +16,6 @@
 		AchievementsData,
 		UnlockAchievement,
 	} from "../../../Game/Achievements/Achievements.svelte.ts";
-	import { log } from "console";
-	import {
-		UpgradesData,
-		UpgradesKey,
-	} from "../../../Game/Soap/Upgrades.svelte.ts";
 
 	let {
 		type,
@@ -127,11 +122,6 @@
 			)
 				UnlockAchievement(AchievementKey.OrangeDeccel1);
 		}
-
-		if (AchievementsData[AchievementKey.ILY].check(qualityCount))
-			UnlockAchievement(AchievementKey.ILY);
-		if (AchievementsData[AchievementKey.Maxxed].check(qualityCount, speedCount))
-			UnlockAchievement(AchievementKey.Maxxed);
 	});
 
 	// Quality autobuy code

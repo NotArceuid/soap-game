@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CollapsibleCard } from "svelte5-collapsible";
-	import { slide } from "svelte/transition";
+	import { fade, slide } from "svelte/transition";
 	import { Player } from "../../Game/Player.svelte";
 	import { UpgradesData, UpgradesKey } from "../../Game/Soap/Upgrades.svelte";
 	import { DevHacks } from "../../Game/Game.svelte";
