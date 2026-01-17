@@ -4,7 +4,7 @@
 	import { MainPageHandler, PagesEnum } from "../Pages/Pages.svelte";
 </script>
 
-<div id="navbar" class="border py-3">
+<div id="navbar" class="border py-3 border-border">
 	<button onclick={() => MainPageHandler.ChangePage(PagesEnum.Soap)}
 		>Soap</button
 	>

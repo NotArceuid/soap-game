@@ -6,11 +6,9 @@ import { Player } from "../Player.svelte.ts";
 import { SaveSystem } from "../Saves.ts";
 import type { IUpgradesInfo } from "../../routes/Components/UpgradesInfo.svelte.ts";
 import { Soaps, SoapType } from "./Soap.svelte.ts";
-import { log } from "console";
 import { AchievementKey, UnlockAchievement } from "../Achievements/Achievements.svelte.ts";
 
 export const UpgradeBought: InvokeableEvent<UpgradesKey> = new InvokeableEvent<UpgradesKey>();
-
 export enum UpgradesKey {
   RedSoapAutoSeller,
   RedSoapAutoSellBonus,
@@ -50,6 +48,8 @@ export abstract class BaseUpgrade implements IUpgradesInfo {
   abstract Requirements: [() => ReactiveText, () => boolean];
   abstract ShowCondition: () => boolean;
   abstract cost: Decimal;
+  buttonStyle?: string;
+  invertText?: boolean;
   effect?: () => ReactiveText;
   count: number = $state(0)
   getMax?: () => number = undefined;
@@ -86,6 +86,8 @@ class RedSoapAutoSeller extends BaseUpgrade {
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.greaterThan(this.cost)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
 
+  buttonStyle = Soaps[SoapType.Red].StyleColor;
+  invertText = true;
 }
 class QualityUpgrade extends BaseUpgrade {
   key = UpgradesKey.QualityUpgrade;
@@ -172,7 +174,9 @@ class RedSoapAutoSellBonus extends BaseUpgrade {
   }
 
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.greaterThan(this.cost)] as [() => ReactiveText, () => boolean];
-  ShowCondition = () => true;
+  ShowCondition = () => UpgradesData[UpgradesKey.RedSoapAutoSeller].count > 0;
+  buttonStyle = Soaps[SoapType.Red].StyleColor;
+  invertText = true;
 }
 
 class RedSoapAutoSellerCostRed extends BaseUpgrade {
@@ -192,10 +196,12 @@ class RedSoapAutoSellerCostRed extends BaseUpgrade {
   }
 
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.greaterThan(this.cost)] as [() => ReactiveText, () => boolean];
-  ShowCondition = () => true;
+  ShowCondition = () => UpgradesData[UpgradesKey.RedSoapAutoSeller].count > 0;
   effect = () => {
     return new ReactiveText(`Cost Reduction: ${this.count}%`);
   }
+  buttonStyle = Soaps[SoapType.Red].StyleColor;
+  invertText = true;
 }
 
 class BulkUpgrade extends BaseUpgrade {
@@ -242,6 +248,9 @@ class EatRedSoapUpgrade extends BaseUpgrade {
   }
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.gt(this.cost)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
+
+  buttonStyle = Soaps[SoapType.Red].StyleColor;
+  invertText = true;
 }
 
 class RedQualityAutobuy extends BaseUpgrade {
@@ -257,6 +266,9 @@ class RedQualityAutobuy extends BaseUpgrade {
   get cost() {
     return new Decimal("2.5e+20")
   }
+
+  buttonStyle = Soaps[SoapType.Red].StyleColor;
+  invertText = true;
 }
 
 class RedSpeedAutobuy extends BaseUpgrade {
@@ -271,6 +283,9 @@ class RedSpeedAutobuy extends BaseUpgrade {
   get cost() {
     return new Decimal("2.5e+20")
   }
+
+  buttonStyle = Soaps[SoapType.Red].StyleColor;
+  invertText = true;
 }
 
 class UnlockFoundry extends BaseUpgrade {
@@ -340,6 +355,8 @@ class UnlockOrangeSoap extends BaseUpgrade {
   }
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.gt(this.cost)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
+  buttonStyle = Soaps[SoapType.Orange].StyleColor;
+  invertText = true;
 }
 
 
@@ -372,6 +389,8 @@ class OrangeSoapAutoSeller extends BaseUpgrade {
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.greaterThan(this.cost)] as [() => ReactiveText, () => boolean];
   ShowCondition = () => true;
 
+  buttonStyle = Soaps[SoapType.Orange].StyleColor;
+  invertText = true;
 }
 
 class OrangeSoapAutoSellBonus extends BaseUpgrade {
@@ -395,7 +414,10 @@ class OrangeSoapAutoSellBonus extends BaseUpgrade {
   }
 
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.greaterThan(this.cost)] as [() => ReactiveText, () => boolean];
-  ShowCondition = () => true;
+  ShowCondition = () => UpgradesData[UpgradesKey.OrangeSoapAutoSeller].count > 0;
+
+  buttonStyle = Soaps[SoapType.Orange].StyleColor;
+  invertText = true;
 }
 
 
@@ -416,10 +438,13 @@ class OrangeSoapAutoSellReduction extends BaseUpgrade {
   }
 
   Requirements = [() => new ReactiveText(this.cost.format()), () => Player.Money.greaterThan(this.cost)] as [() => ReactiveText, () => boolean];
-  ShowCondition = () => true;
+  ShowCondition = () => UpgradesData[UpgradesKey.OrangeSoapAutoSeller].count > 0;
   effect = () => {
     return new ReactiveText(`Cost Reduction: ${this.count}%`);
   }
+
+  buttonStyle = Soaps[SoapType.Orange].StyleColor;
+  invertText = true;
 }
 class OrangeQualityAutobuy extends BaseUpgrade {
   key = UpgradesKey.OrangeQualityAutoBuy
@@ -434,6 +459,9 @@ class OrangeQualityAutobuy extends BaseUpgrade {
   get cost() {
     return new Decimal("2.5e+32")
   }
+
+  buttonStyle = Soaps[SoapType.Orange].StyleColor;
+  invertText = true;
 }
 
 class OrangeSpeedAutoBuy extends BaseUpgrade {
@@ -448,6 +476,9 @@ class OrangeSpeedAutoBuy extends BaseUpgrade {
   get cost() {
     return new Decimal("2.5e+32")
   }
+
+  buttonStyle = Soaps[SoapType.Orange].StyleColor;
+  invertText = true;
 }
 
 class CatUpgrade extends BaseUpgrade {

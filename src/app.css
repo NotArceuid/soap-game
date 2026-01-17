@@ -14,7 +14,7 @@
   :root, :host {
     @variant dark {
       --color-bg: #1d2021;
-      --color-border: #fff;
+      --color-border: #767876;
       --color-active: #000;
       --color-inactive: #ccc;
       --color-font: #cccccc;

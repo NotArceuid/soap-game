@@ -16,6 +16,8 @@
 	async function saveToClipboard() {
 		const saveString = await SaveSystem.exportToString();
 		await navigator.clipboard.writeText(saveString);
+
+		NotificationPopUp.invoke({ name: "Saves", description: "Game Saved!" });
 	}
 
 	async function saveToFile() {
@@ -28,6 +30,7 @@
 			a.href = URL.createObjectURL(blob);
 			a.click();
 			a.remove();
+			NotificationPopUp.invoke({ name: "Saves", description: "Game Saved!" });
 		} catch {}
 	}
 
@@ -141,7 +144,7 @@
 			</div>
 			<SaveSlot save={true} idx="0" />
 			<button
-				class="bg-red-300 w-full"
+				class="bg-red-300 w-full text-black"
 				onclick={() => {
 					localStorage.setItem(OfflineProps.saveId.toString(), "");
 					localStorage.setItem("savedate", "");

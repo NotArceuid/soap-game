@@ -162,7 +162,7 @@ export class NumberFormatter {
   private formatScientific(value: Decimal): string {
     if (value.eq(Decimal.ZERO)) return '0';
     if (value.lt(1000)) {
-      return value.toPrecision(2).toString();
+      return value.toFixed(2).toString();
     }
     const exponent = Decimal.floor(Decimal.log10(Decimal.abs(value)));
     const mantissa = value.div(Decimal.pow(10, exponent));

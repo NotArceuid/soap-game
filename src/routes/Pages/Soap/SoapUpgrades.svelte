@@ -26,12 +26,20 @@
 			)
 		)
 			UnlockAchievement(AchievementKey.Automation);
+
 		if (
 			AchievementsData[AchievementKey.EatSoap].check(
 				new Decimal(UpgradesData[UpgradesKey.EatRedSoapUpgrade].count),
 			)
 		)
 			UnlockAchievement(AchievementKey.EatSoap);
+
+		if (
+			AchievementsData[AchievementKey.SixNineNineNine].check(
+				new Decimal(UpgradesData[UpgradesKey.RedSoapAutoSellBonus].count),
+			)
+		)
+			UnlockAchievement(AchievementKey.SixNineNineNine);
 		if (
 			AchievementsData[AchievementKey.Foundry].check(
 				new Decimal(UpgradesData[UpgradesKey.UnlockFoundry].count),
@@ -67,7 +75,8 @@
 			{#each data as upgrade}
 				{#if (upgrade[1].ShowCondition() && (showMaxxedUpgrades || upgrade[1].count < upgrade[1].maxCount)) || DevHacks.skipUnlock}
 					<ActionButton
-						buttonClass="w-67 h-12 shrink-0 m-2"
+						buttonClass="w-67 h-12 shrink-0 m-2 {upgrade[1]
+							.buttonStyle} {upgrade[1].invertText ? 'text-black' : ''}"
 						disabled={upgrade[1].Requirements[1]()}
 						onclick={() => {
 							if (currUpgrade == upgrade[1]) currUpgrade = undefined;

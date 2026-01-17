@@ -17,6 +17,7 @@ export abstract class SoapBase implements ISoapData {
   abstract QualityDivisor: Decimal;
   abstract EatReq: Decimal;
   abstract SellPrice: Decimal;
+  abstract StyleColor: string;
 
   Amount: Decimal = $state(Decimal.ZERO);
   EatAmount: Decimal = $state(Decimal.ZERO);
@@ -43,7 +44,7 @@ class RedSoap extends SoapBase {
     return new ReactiveText(`Sell multiplier: ${(this.EatAmount.div("5e12").format())}x`)
   }
   SellPrice: Decimal = Decimal.ONE;
-  DeccelerateBase: Decimal = new Decimal(1000);
+  DeccelerateBase: Decimal = new Decimal(100);
   SpeedCostBase: Decimal = new Decimal(7.29);
   SpeedDivisor: Decimal = Decimal.ONE;
   QualityCostBase: Decimal = new Decimal(4.5);
@@ -52,6 +53,7 @@ class RedSoap extends SoapBase {
   MaxProgress = $state(new Decimal(100));
   EatReq = new Decimal("2.5e+14");
   Unlocked = true;
+  StyleColor: string = "bg-red-300";
 }
 
 class OrangeSoap extends SoapBase {
@@ -68,6 +70,7 @@ class OrangeSoap extends SoapBase {
   QualityCostBase: Decimal = new Decimal(1e16);
   SpeedDivisor: Decimal = new Decimal(100000);
   QualityDivisor: Decimal = new Decimal(100000);
+  StyleColor: string = "bg-orange-300";
 }
 
 class YellowSoap extends SoapBase {
@@ -84,6 +87,7 @@ class YellowSoap extends SoapBase {
   QualityCostBase: Decimal = Decimal.ONE;
   SpeedDivisor: Decimal = new Decimal(1000);
   QualityDivisor: Decimal = new Decimal(1000);
+  StyleColor: string = "bg-yellow-300";
 }
 
 class GreenSoap extends SoapBase {
@@ -100,6 +104,7 @@ class GreenSoap extends SoapBase {
   QualityCostBase: Decimal = Decimal.ONE;
   SpeedDivisor: Decimal = new Decimal(1000);
   QualityDivisor: Decimal = new Decimal(1000);
+  StyleColor: string = "bg-green-300";
 }
 
 class BlueSoap extends SoapBase {
@@ -116,6 +121,7 @@ class BlueSoap extends SoapBase {
   QualityCostBase: Decimal = Decimal.ONE;
   SpeedDivisor: Decimal = new Decimal(1000);
   QualityDivisor: Decimal = new Decimal(1000);
+  StyleColor: string = "bg-blue-300";
 }
 
 class IndigoSoap extends SoapBase {
@@ -132,6 +138,7 @@ class IndigoSoap extends SoapBase {
   QualityCostBase: Decimal = Decimal.ONE;
   SpeedDivisor: Decimal = new Decimal(1000);
   QualityDivisor: Decimal = new Decimal(1000);
+  StyleColor: string = "bg-white-300";
 }
 
 class VioletSoap extends SoapBase {
@@ -149,6 +156,7 @@ class VioletSoap extends SoapBase {
   QualityCostBase: Decimal = Decimal.ONE;
   SpeedDivisor: Decimal = new Decimal(1000);
   QualityDivisor: Decimal = new Decimal(1000);
+  StyleColor: string = "bg-white-300";
 }
 
 class WhiteSoap extends SoapBase {
@@ -166,6 +174,8 @@ class WhiteSoap extends SoapBase {
   QualityCostBase: Decimal = Decimal.ONE;
   SpeedDivisor: Decimal = new Decimal(1000);
   QualityDivisor: Decimal = new Decimal(1000);
+
+  StyleColor: string = "bg-white-300";
 }
 
 class BlackSoap extends SoapBase {
@@ -183,6 +193,8 @@ class BlackSoap extends SoapBase {
   QualityCostBase: Decimal = Decimal.ONE;
   SpeedDivisor: Decimal = new Decimal(1000);
   QualityDivisor: Decimal = new Decimal(1000);
+
+  StyleColor: string = "bg-white-300";
 }
 
 class RainbowSoap extends SoapBase {
@@ -199,6 +211,8 @@ class RainbowSoap extends SoapBase {
   QualityCostBase: Decimal = Decimal.ONE;
   SpeedDivisor: Decimal = new Decimal(1000);
   QualityDivisor: Decimal = new Decimal(1000);
+
+  StyleColor: string = "bg-white-300";
 }
 
 export enum SoapPages {

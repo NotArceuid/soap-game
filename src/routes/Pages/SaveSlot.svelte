@@ -59,7 +59,7 @@
 	}
 </script>
 
-<div class="border p-2 pb-0 w-full">
+<div class="border p-2 pb-0 w-full border-border">
 	<h1 class="text-left pb-2">{Player.Name}</h1>
 	<div class="flex flex-wrap flex-row gap-2 mb-2">
 		{#if save}

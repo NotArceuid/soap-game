@@ -134,7 +134,7 @@ export class GameLoop {
     if (OfflineProps.calculating)
       this.options.step = 1;
     else
-      this.options.step = 500 / (DevHacks.speedhack ? 50 : 10);
+      this.options.step = 500 / (DevHacks.speedhack ? 50 : 15);
 
     this.start()
   }

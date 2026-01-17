@@ -12,20 +12,17 @@
 		UpgradesKey,
 	} from "../../../Game/Soap/Upgrades.svelte";
 	import { PageHandler, PagesEnum } from "../Pages.svelte.ts";
-	import { log } from "console";
 	import {
 		AchievementKey,
-		AchievementsData,
 		UnlockAchievement,
 	} from "../../../Game/Achievements/Achievements.svelte.ts";
-	import { fade } from "svelte/transition";
 
 	const pageHandler = new PageHandler<SoapPages>(false, PagesEnum.Soap);
 
 	let upgradesUnlocked = $state(false);
 	let foundryUnlocked = $state(false);
 	$effect(() => {
-		if (Player.Money.gt(10)) {
+		if (Player.Money.gt(7.5)) {
 			upgradesUnlocked = true;
 			UnlockAchievement(AchievementKey.Upgrades);
 		}

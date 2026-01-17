@@ -118,7 +118,10 @@
 		>
 			<NavBar />
 			<div class="flex flex-rows w-full h-full">
-				<div id="locations" class="w-11/12 relative border-l border-b">
+				<div
+					id="locations"
+					class="w-11/12 relative border-l border-b border-border"
+				>
 					<Soap />
 					<Cat />
 					<Achievements />

@@ -35,8 +35,10 @@ export enum AchievementKey {
   Nice,
   Upgrades,
   Automation,
+  Overcap,
   OCD,
   Millionaire,
+  SixNineNineNine,
   Deccelerate,
   HighSpeed,
   Accelerate,
@@ -92,6 +94,11 @@ export const AchievementsData: Record<AchievementKey, IAchievement> = $state({
     description: "The factory must grow!!",
     check: (...props) => props[0].gt(1)
   },
+  [AchievementKey.Overcap]: {
+    name: "Catch me if you can",
+    description: "Overcap your speed for the first time",
+    check: (...props) => props[0].gt(props[1])
+  },
   [AchievementKey.OCD]: {
     name: "5 squares",
     description: "Get more than 25 quality and speed upgrades",
@@ -101,6 +108,12 @@ export const AchievementsData: Record<AchievementKey, IAchievement> = $state({
     name: "Millionaire",
     description: "Get more than 1 million money",
     check: (...props) => props[0].gt(1000000),
+  },
+
+  [AchievementKey.SixNineNineNine]: {
+    name: "Six Nine Nien",
+    description: "Cost: 69, level: 9/99",
+    check: (...props) => props[0].eq(9)
   },
   [AchievementKey.Deccelerate]: {
     name: "Quality over quantity",

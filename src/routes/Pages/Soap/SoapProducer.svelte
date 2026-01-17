@@ -115,6 +115,13 @@
 				)
 			)
 				UnlockAchievement(AchievementKey.Deccelerate4);
+			if (
+				AchievementsData[AchievementKey.Overcap].check(
+					new Decimal(producer.Speed),
+					new Decimal(producer.MaxProgress),
+				)
+			)
+				UnlockAchievement(AchievementKey.Overcap);
 		}
 		if (type === SoapType.Orange) {
 			if (
@@ -200,7 +207,7 @@
 </script>
 
 {#if unlocked}
-	<div class="border p-2 h-fit min-w-xl max-w-2xl">
+	<div class="border p-2 h-fit min-w-xl max-w-2xl border-border">
 		<div class="flex flex-row border-b pb-2">
 			<div class="flex flex-col w-9/12">
 				<div class="mb-3 w-full h-full flex flex-col relative">
@@ -209,18 +216,24 @@
 							{SoapNameMapping[type]} ({soap.Amount.format()}x)
 						</h1>
 						<h1 class="ml-auto">
-							({producer.Progress.format()} /
+							({producer.Speed > producer.MaxProgress
+								? producer.MaxProgress.format()
+								: producer.Progress.format()} /
 							{producer.MaxProgress.format()})
 						</h1>
 					</div>
-					<div class="h-2">
+					<div class="h-2 relative overflow-hidden rounded">
+						<!-- Progress bar with smooth transition -->
 						<div
-							class="bg-blue-300 absolute h-2"
-							style="width: {producer.Progress.div(producer.MaxProgress).mul(
-								100,
-							)}%"
+							class="{soap.StyleColor} absolute h-2 transition-all ease-out"
+							style="width: {producer.Speed > producer.MaxProgress
+								? 100
+								: producer.Progress.div(producer.MaxProgress).mul(100)}%"
 						></div>
-						<div class="border w-full h-full z-10"></div>
+						<!-- Border overlay -->
+						<div
+							class="border border-gray-900 w-full h-full absolute rounded"
+						></div>
 					</div>
 				</div>
 
@@ -388,7 +401,7 @@
 				{/snippet}
 
 				{#snippet body()}
-					<div class="flex flex-row">
+					<div class="flex flex-row border-border">
 						<h1>
 							Total: {producer.ProducedAmount.format()}
 						</h1>

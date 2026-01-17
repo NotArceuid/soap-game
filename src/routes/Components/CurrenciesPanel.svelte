@@ -29,7 +29,7 @@
 	});
 </script>
 
-<div class="border-x h-full">
+<div class="border-x h-full border-border">
 	<h1 class="text-center border-b py-2 font-bold">Currencies</h1>
 	<div class="m-3 w-full">
 		<h1>Money: {Player.Money.format()}</h1>
