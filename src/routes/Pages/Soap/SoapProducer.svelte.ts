@@ -67,7 +67,7 @@ export class SoapProducer {
       case SoapType.Red:
         return UpgradesData[UpgradesKey.RedQualityNoCost].count < 1;
       default:
-        return false;
+        return true;
     }
   }
 
@@ -76,7 +76,7 @@ export class SoapProducer {
       case SoapType.Red:
         return UpgradesData[UpgradesKey.RedSpeedNoCost].count < 1;
       default:
-        return false;
+        return true;
     }
   }
 
