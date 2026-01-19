@@ -1,7 +1,7 @@
 {
   "name": "Shitty Soap Game",
   "private": true,
-  "version": "0.1",
+  "version": "1.0",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
@@ -41,6 +41,7 @@
     "@types/node": "^24.10.4",
     "@types/uuid": "^11.0.0",
     "cloc": "2.6.0-cloc",
+    "gh-pages": "^6.3.0",
     "madge": "^8.0.0",
     "prettier-plugin-svelte": "^3.4.1",
     "svelte-i18n": "^4.0.1",
